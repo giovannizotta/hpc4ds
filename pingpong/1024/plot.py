@@ -15,7 +15,7 @@ def main():
     sizes = list(range(len(rows)))
     seconds_y = [row[1] * 100000000 for row in rows]
     bandwidth_y = [row[2] / 1000000 for row in rows]
-    plt.plot(sizes, seconds_y, label = "Time (ms)")
+    plt.scatter(sizes, seconds_y, label = "Time (ms)", s=1)
     plt.plot(sizes, bandwidth_y, label = "Bandwidth (MB/s)")
     plt.xlabel("log(packet size)")
     plt.legend()
