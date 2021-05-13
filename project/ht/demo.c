@@ -7,7 +7,7 @@ See also:
 https://stackoverflow.com/questions/5134891/how-do-i-use-valgrind-to-find-memory-leaks
 */
 
-#include "../ht.h"
+#include "ht.h"
 
 #include <ctype.h>
 #include <stdio.h>
