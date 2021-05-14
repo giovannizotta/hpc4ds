@@ -1,118 +1,183 @@
 #include <stdio.h>
 #include <string.h>
 #include <mpi.h>
-#include "../cvector/cvector.h"
+#include <math.h>
+#include <stdlib.h>
+#include "cvector/cvector.h"
 
-double f(double x){
-    return (x - 3) * (x - 4) * (x - 5) * (x - 6) * (x - 7) + 4;
+typedef cvector_vector_type(char) Item;
+typedef cvector_vector_type(Item) Transaction;
+typedef cvector_vector_type(Transaction) TransactionsList;
+
+int min(int a, int b){
+    return a < b ? a : b; 
 }
 
-void read_file(int argc, char **argv, int rank, int world_size){
+int max(int a, int b){
+    return a < b ? b : a;
+}
+
+void free_transactions(TransactionsList* transactions){
+    size_t n_transactions = cvector_size((*transactions));
+    size_t i, j;
+    for(i = 0; i < n_transactions; i++){
+        size_t n_items = cvector_size((*transactions)[i]);
+        for (j = 0; j < n_items; j++) {
+            cvector_free((*transactions)[i][j]);
+        }
+        cvector_free((*transactions)[i]);
+    }
+    cvector_free((*transactions));
+    *transactions = NULL;
+}
+
+// void write_file(int rank, TransactionsList transactions){
+//     char filename[10];
+//     MPI_File out;
+//     sprintf(filename, "%d.txt", rank);
+//     printf("%d writing output to %s\n", rank, filename);
+//     int ierr = MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &out);
+//     if (ierr){
+//     	printf("Error while writing!\n");
+// 	    MPI_Finalize();
+//         exit(1);
+//     }
+//     size_t n_transactions = cvector_size(transactions);
+//     printf("%d Writing %lu transactions\n", rank, n_transactions);
+//     size_t i, j;
+//     char space[2] = " ";
+//     char newline[2] = "\n"; 
+//     for(i = 0; i < n_transactions; i++){
+//     	size_t n_items = cvector_size((transactions[i]));
+//         // printf("\t%d Writing transaction %d, having %d elements\n", rank, i, n_items);
+
+//         for (j = 0; j < n_items; j++){
+//             size_t item_size = cvector_size((transactions[i][j]));
+//             // printf("\t\t%d Writing item %d of transaction %d, long %d chars\n", rank, j, i, item_size);
+//             MPI_File_write(out, transactions[i][j], item_size, MPI_CHAR, MPI_STATUS_IGNORE);
+//             if (j < n_items - 1)
+//                 MPI_File_write(out, space, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+//         }
+// 	    MPI_File_write(out, newline, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+//     }
+//     MPI_File_close(&out);
+// }
+
+int parse_item(int rank, int i, char* chunk, int chunksize, char*** transaction){
+    // see if actually there is an item
+    while (chunk[i] == ' ') {
+        i++;
+    }
+    if (chunk[i] == '\0' || chunk[i] == '\n'){
+        return i;
+    }
+
+    // read the item
+    Item item = NULL;
+    while (chunk[i] != ' ' && chunk[i] != '\n' && chunk[i] != '\0'){
+        cvector_push_back(item, chunk[i]);
+        i++;
+    }
+    cvector_push_back(item, '\0');
+    // push it into the current transaction
+    cvector_push_back((*transaction), item);
+    return i;
+}
+
+int parse_transaction(int rank, int i, char* chunk, int my_size, TransactionsList* transactions){
+    // printf("read transaction from pos %d\n", i);
+    while (chunk[i] == '\n'){
+        i++;
+    }
+    if (chunk[i] == '\0'){
+        return i;
+    
+    }
+    Transaction transaction = NULL;
+
+    while (chunk[i] != '\n' && chunk[i] != '\0'){
+        // assert(chunk[i] != '\0');
+        i = parse_item(rank, i, chunk, my_size, &transaction);
+        // assert(chunk[i] == '\n' || chunk[i] == ' ');
+    }
+    cvector_push_back((*transactions), transaction);
+
+    return i;
+}
+
+void read_chunk(char* filename, int rank, int world_size, int* my_size, int* read_size){
     MPI_File in;
     int ierr;
-    cvector_vector_type(char**) transactions = NULL;
-
-    const int overlap = 100;
-    char a[101];
-
-    if (argc != 2) {
-        if (rank == 0) fprintf(stderr, "Usage: %s infilename\n", argv[0]);
-        MPI_Finalize();
-        exit(1);
-    }
-
-    ierr = MPI_File_open(MPI_COMM_WORLD, argv[1], MPI_MODE_RDONLY, MPI_INFO_NULL, &in);
+    ierr = MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_RDONLY, MPI_INFO_NULL, &in);
     if (ierr) {
-        if (rank == 0) fprintf(stderr, "%s: Couldn't open file %s\n", argv[0], argv[1]);
+        if (rank == 0) fprintf(stderr, "Process %d: Couldn't open file %s\n", rank, filename);
         MPI_Finalize();
-        exit(2);
+       	exit(2);
     }
+
     MPI_Offset start;
-    MPI_Offset end;
     MPI_Offset filesize;
-
     MPI_File_get_size(in, &filesize);
-    filesize--;
-    int mysize = (filesize / world_size) + 1;
-    start = max(0, rank * mysize - 1);
-    end = min(filesize, start + (2 * mysize) - 1);
-    char* chunk = malloc( (2 * mysize + 1) * sizeof(char));
     
-    MPI_File_read_at(in, start, chunk, mysize, MPI_CHAR, MPI_STATUS_IGNORE);
-    chunk[mysize] = '\0';
+    //------ READ CHUNK -------
+    *my_size = filesize / world_size + 1;
+    start = max(0, rank * (*my_size) - 1);
+    *read_size = 2 * (*my_size);
+    if (start + *read_size >= filesize){
+    	*read_size = filesize - start;
+        (*my_size) = min((*my_size), *read_size);
+    }
+    char* chunk = malloc( (*read_size + 1) * sizeof(char));
+    MPI_File_read_at(in, start, chunk, *read_size, MPI_CHAR, MPI_STATUS_IGNORE);
+
+    chunk[*read_size] = '\0';
+
+    MPI_File_close(&in);
+}
+
+void read_file(char* filename, int rank, int world_size){
     
+    
+    char* chunk;
+    int my_size, read_size;
+    read_chunk(filename, rank, chunk, &my_size, &read_size);
+
+    //------ READ TRANSACTIONS ----------
+    TransactionsList transactions = NULL;
+
     int i = 0;
-    while(chunk[i] != '\n'){
-        i++;
+    // skip first incomplete transaction
+    if (rank > 0){
+        while(chunk[i] != '\n'){
+            i++;
+        }
     }
-    i++;
-    cvector_vector_type(char*) transaction = NULL;
-    cvector_vector_type(char) item = NULL;
-    while(i < mysize){
-        while(i < mysize && chunk[i] != ' ' && chunk[i] != '\n'){
-            cvector_push_back(item, chunk[i]);
-            i++;
-        }
-        if(i < mysize){
-            cvector_push_back(item, '\0');
-            cvector_push_back(transaction, item);
-            item = NULL;
-            if(chunk[i] == '\n'){
-                cvector_push_back(transactions, transaction);
-                transaction = NULL;
-            } 
-            i++;
-        }
+    while(i < my_size){
+        i = parse_transaction(rank, i, chunk, read_size, &transactions);
+        assert(cvector_size(transactions) > 0);
     } 
-
-    while(chunk[i] != '\n'){
-        while(chunk[i] != ' ' && chunk[i] != '\n'){
-            cvector_push_back(item, chunk[i]);
-            i++;
-        }
-        cvector_push_back(item, '\0');
-        cvector_push_back(transaction, item);
-        item = NULL;
-        if(chunk[i] == '\n'){
-            cvector_push_back(transactions, transaction);
-            transaction = NULL;
-        } 
-        i++;
-    }
-
-    free(chunk);        
+    // write_file(rank, transactions);
+    free(chunk);      
+    size_t n_transactions = cvector_size(transactions);
+    printf("%d Read %lu transactions\n", rank, n_transactions);
+    free_transactions(&transactions);  
 }
 
 int main(int argc, char **argv){
-    int my_rank, world_size;
+    int rank, world_size;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank); 
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank); 
+    // printf("World size: %d\n", world_size);
 
-
-    double a, b;
-    sscanf(argv[1], "%lf", &a);
-    sscanf(argv[2], "%lf", &b);
-    double interval_width = (double)(b-a)/(double)(world_size-1);
-    if(my_rank != 0){
-        double my_a = a + (interval_width * (my_rank - 1));
-        double my_b = a + (interval_width * my_rank);
-        double area = (interval_width / 2) * (f(my_a) + f(my_b));
-        double message[3] = {area, my_a, my_b};
-        MPI_Send(message, 3, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
-    } else {
-        printf("I'm listening for areas\n");
-        double result = 0;
-        for(int i = 1; i < world_size; i++){
-            double area[3];
-            MPI_Recv(area, 3, MPI_DOUBLE, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            printf("Received a trapezoid of size %lf from %lf to %lf\n", area[0], area[1], area[2]);
-            result += area[0];
-        }
-        printf("The final result is %lf\n", result);
+    if (argc != 2) {
+        if (rank == 0) 
+            fprintf(stderr, "Usage: %s infilename\n", argv[0]);
+        MPI_Finalize();
+        exit(1);
     }
-
+    read_file(argv[1], rank, world_size); 
     MPI_Finalize();
     return 0;
     
