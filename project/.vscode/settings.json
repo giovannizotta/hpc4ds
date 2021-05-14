@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "algorithm": "c",
-        "cvector.h": "c"
+        "cvector.h": "c",
+        "io.h": "c"
     }
 }
