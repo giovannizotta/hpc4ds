@@ -1,13 +1,18 @@
 FILENAME?="data/small_dataset.txt"
 NTHREAD?=4
 
+main: help
+
 build:
-	@mpicc -Wall src/*.c -o bin/main
+	@mpicc -Wall src/*.c -o bin/main.out
 
 run_local:
-	@mpiexec bin/main $(FILENAME) -n $(NTHREAD)
+	@mpiexec -n $(NTHREAD) bin/main.out $(FILENAME)
 
-all: clean build run_local
+all: clean build run_local 
 
 clean: 
-	@rm bin/*
+	@rm -f bin/*
+
+help: 
+	@echo "Not like this"

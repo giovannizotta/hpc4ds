@@ -4,7 +4,7 @@
 #include "utils.h"
 
 
-void free_transactions(TransactionsList* transactions){
+void free_transactions(TransactionsList *transactions){
     size_t n_transactions = cvector_size((*transactions));
     size_t i, j;
     for(i = 0; i < n_transactions; i++){
@@ -50,7 +50,22 @@ void free_transactions(TransactionsList* transactions){
 //     MPI_File_close(&out);
 // }
 
-int parse_item(int rank, int i, char* chunk, int chunksize, Transaction* transaction){
+void update_supports(Item item, SupportMap *support_map){
+    item_count *s, *tmp = NULL;
+
+    HASH_FIND_STR((*support_map), item, tmp);
+    if (tmp == NULL) {
+        s = (item_count *)malloc(sizeof *s);
+        s->item = item;
+        s->count = 1;
+        HASH_ADD_KEYPTR(hh, (*support_map), s->item, strlen(s->item), s);
+    }else{
+        tmp->count++;
+    }
+    
+}
+
+int parse_item(int rank, int i, char *chunk, int chunksize, Transaction *transaction, SupportMap *support_map){
     // see if actually there is an item
     while (chunk[i] == ' ') {
         i++;
@@ -68,10 +83,12 @@ int parse_item(int rank, int i, char* chunk, int chunksize, Transaction* transac
     cvector_push_back(item, '\0');
     // push it into the current transaction
     cvector_push_back((*transaction), item);
+    update_supports(item, support_map);
+    printf("Adding item %saa\n", item);
     return i;
 }
 
-int parse_transaction(int rank, int i, char* chunk, int my_size, TransactionsList* transactions){
+int parse_transaction(int rank, int i, char *chunk, int my_size, TransactionsList *transactions, SupportMap *support_map){
     // printf("read transaction from pos %d\n", i);
     while (chunk[i] == '\n'){
         i++;
@@ -83,7 +100,7 @@ int parse_transaction(int rank, int i, char* chunk, int my_size, TransactionsLis
 
     while (chunk[i] != '\n' && chunk[i] != '\0'){
         // assert(chunk[i] != '\0');
-        i = parse_item(rank, i, chunk, my_size, &transaction);
+        i = parse_item(rank, i, chunk, my_size, &transaction, support_map);
         // assert(chunk[i] == '\n' || chunk[i] == ' ');
     }
     cvector_push_back((*transactions), transaction);
@@ -91,7 +108,7 @@ int parse_transaction(int rank, int i, char* chunk, int my_size, TransactionsLis
     return i;
 }
 
-void read_chunk(char* filename, int rank, int world_size, char** chunk, int* my_size, int* read_size){
+void read_chunk(char *filename, int rank, int world_size, char **chunk, int *my_size, int *read_size){
     MPI_File in;
     int ierr;
     ierr = MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_RDONLY, MPI_INFO_NULL, &in);
@@ -121,8 +138,8 @@ void read_chunk(char* filename, int rank, int world_size, char** chunk, int* my_
     MPI_File_close(&in);
 }
 
-void read_transactions(TransactionsList* transactions, char* filename, int rank, int world_size){
-    char* chunk;
+void read_transactions(TransactionsList *transactions, char *filename, int rank, int world_size, SupportMap *support_map){
+    char *chunk;
     int my_size, read_size;
     read_chunk(filename, rank, world_size, &chunk, &my_size, &read_size);
 
@@ -135,7 +152,7 @@ void read_transactions(TransactionsList* transactions, char* filename, int rank,
         }
     }
     while(i < my_size){
-        i = parse_transaction(rank, i, chunk, read_size, transactions);
+        i = parse_transaction(rank, i, chunk, read_size, transactions, support_map);
         assert(cvector_size((*transactions)) > 0);
     } 
     // write_file(rank, transactions);

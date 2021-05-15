@@ -6,8 +6,6 @@
 
 #include "io.h"
 
-
-
 int main(int argc, char **argv){
     int rank, world_size;
 
@@ -24,10 +22,23 @@ int main(int argc, char **argv){
     }
 
     TransactionsList transactions = NULL;
-    read_transactions(&transactions, argv[1], rank, world_size); 
+    SupportMap support_map = NULL;
+    read_transactions(&transactions, argv[1], rank, world_size, &support_map);
+
+    item_count *s, *tmp = NULL;
+    HASH_ITER(hh, (support_map), s, tmp) {
+        printf("%s appears %d\n", s->item, s->count);
+    }
+
+    /* free the hash table contents */
+    HASH_ITER(hh, (support_map), s, tmp) {
+        HASH_DEL((support_map), s);
+        free(s);
+    }
 
     free_transactions(&transactions);  
     MPI_Finalize();
+
     return 0;
     
 }
