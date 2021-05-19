@@ -18,6 +18,16 @@ void free_transactions(TransactionsList *transactions){
     *transactions = NULL;
 }
 
+void free_map(SupportMap *support_map){
+    item_count *s, *tmp = NULL;
+    /* free the hash table contents */
+    HASH_ITER(hh, (*support_map), s, tmp) {
+        HASH_DEL((*support_map), s);
+        free(s);
+    }
+    *support_map = NULL;
+}
+
 // void write_file(int rank, TransactionsList transactions){
 //     char filename[10];
 //     MPI_File out;
@@ -84,7 +94,6 @@ int parse_item(int rank, int i, char *chunk, int chunksize, Transaction *transac
     // push it into the current transaction
     cvector_push_back((*transaction), item);
     update_supports(item, support_map);
-    printf("Adding item %saa\n", item);
     return i;
 }
 

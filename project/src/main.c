@@ -25,17 +25,12 @@ int main(int argc, char **argv){
     SupportMap support_map = NULL;
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
 
-    item_count *s, *tmp = NULL;
-    HASH_ITER(hh, (support_map), s, tmp) {
-        printf("%s appears %d\n", s->item, s->count);
-    }
+    // item_count *s, *tmp = NULL;
+    // HASH_ITER(hh, (support_map), s, tmp) {
+    //     printf("%s appears %d\n", s->item, s->count);
+    // }
 
-    /* free the hash table contents */
-    HASH_ITER(hh, (support_map), s, tmp) {
-        HASH_DEL((support_map), s);
-        free(s);
-    }
-
+    free_map(&support_map);
     free_transactions(&transactions);  
     MPI_Finalize();
 
