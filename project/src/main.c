@@ -22,15 +22,21 @@ int main(int argc, char **argv){
     }
 
     TransactionsList transactions = NULL;
-    SupportMap support_map = NULL;
+    SupportMap support_map = hashmap_new();
+    printf("AAA\n");
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
+    printf("BBB\n");
+    // MPI_Datatype *MPI_SupportMap = define_MPI_SupportMap();
 
     // item_count *s, *tmp = NULL;
     // HASH_ITER(hh, (support_map), s, tmp) {
     //     printf("%s appears %d\n", s->item, s->count);
     // }
+    // hashmap_print(support_map);
+    printf("%d : %d\n", rank, hashmap_length(support_map));
+    printf("CCC\n");
 
-    free_map(&support_map);
+    // hashmap_free(support_map);
     free_transactions(&transactions);  
     MPI_Finalize();
 

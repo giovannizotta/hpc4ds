@@ -14,3 +14,59 @@
 5.  Ogni processo, per ogni transaction costruisce il suo sottoalbero e li unisce (openMP)
         MPI_Allreduce con MPI_User_function che unisce i due alberi
             Risultato: ogni processo ha l'albero globale
+
+/**
+ * 1. COMBINE HASHMAP
+ *      - total_hashmap_length = allreduce(sum, local_hashmap_length)
+ *      - resize local_hashmap (total_hashmap_length)
+ *      - resize global_hashmap (total_hashmap_length) (HOW?? implement hashmap_resize) 
+ *          ----- (CAN WE SKIP IF WE RESIZE INSIDE REDUCE? -> MAP IS GLOBAL)
+ *      - define MPI datatype MPI_HM (size, totsize, entries(length: total_hashmap_length))
+ *      - global_hashmap = Allreduce(global_hashmap, total_hashmap_length, MPI_HM)
+ *      - free local_hash_map
+ * 
+ * 2. COMBINE FPTREE
+ *      - How big should the tree be? how many nodes? how many child per node?
+ *          - IDEA: avoid sending adjacence list, add optional field parent and send that,
+ *                  in the user operation just rebuilt the adj list
+ *          - for number of nodes: total_fp_size = sum??? -> allreduce(sum, local_fp_size)
+ *      - resize local_fp_tree (total_fp_size)
+ *      - resize global_fp_tree (total_fp_size)
+ *      - MPI datatype MPI_FP: (item (char*), value (int), parent(int))
+ *      - global_fp_tree = Allreduce (...)
+ *      - free local_fp_tree
+ * 
+ * 
+ * ALTERNATIVE:
+ * 1. COMBINE FPTREE
+ * - gather all FPTREEs (MPI_Allgatherv) & combine them with OpenMP
+ *      (cons: each process does the same job)
+ * 
+ * 
+ * CUSTOMREDUCE:
+ * define MPI_Datatype HashmapEntry
+ * - HASHMAP:
+ *      SEND:   
+ *              send array of localmap->data 
+ * 
+ *      RECEIVE: 
+ *              MPI_probe
+ *              get count and allocate map with sufficiently many entries
+ *              receive hashmap_entries and store in receivemap->data
+ *              count how many non void are there -> define a function
+ *              return receivemap ?
+ * 
+ *     REDUCE:
+ *      for i in range depth
+ *          if I should send:
+ *              SEND local hashmap
+ *              globalmap = waitReduce
+ *          else:
+ *              receivemap = RECEIVE
+ *              combine globalmap &= receivemap
+ *      broadcast globalmap totalsize
+ *      broadcast globalmap entries
+ *
+ *              
+ *      
+ */ 

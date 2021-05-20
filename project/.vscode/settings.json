@@ -2,6 +2,11 @@
     "files.associations": {
         "algorithm": "c",
         "cvector.h": "c",
-        "io.h": "c"
+        "io.h": "c",
+        "array": "cpp",
+        "atomic": "cpp",
+        "cstddef": "cpp",
+        "string_view": "cpp",
+        "memory": "cpp"
     }
 }

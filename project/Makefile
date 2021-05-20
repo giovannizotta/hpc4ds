@@ -4,7 +4,7 @@ NTHREAD?=4
 main: help
 
 build:
-	@mpicc -Wall src/*.c -o bin/main.out
+	@mpicc -Wall src/*.c src/hashmap/*.c -o bin/main.out
 
 run_local:
 	@mpiexec -n $(NTHREAD) bin/main.out $(FILENAME)

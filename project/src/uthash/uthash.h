@@ -1111,11 +1111,11 @@ typedef struct UT_hash_table {
    unsigned ineff_expands, noexpand;
 
    uint32_t signature; /* used only to find hash tables in external analysis */
-#ifdef HASH_BLOOM
-   uint32_t bloom_sig; /* used only to test bloom exists in external analysis */
-   uint8_t *bloom_bv;
-   uint8_t bloom_nbits;
-#endif
+// #ifdef HASH_BLOOM
+//    uint32_t bloom_sig; /* used only to test bloom exists in external analysis */
+//    uint8_t *bloom_bv;
+//    uint8_t bloom_nbits;
+// #endif
 
 } UT_hash_table;
 

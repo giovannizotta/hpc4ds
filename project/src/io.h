@@ -10,5 +10,5 @@ int parse_item(int rank, int i, char *chunk, int chunksize, Transaction *transac
 int parse_transaction(int rank, int i, char* chunk, int my_size, TransactionsList* transactions, SupportMap *support_map);
 void read_chunk(char* filename, int rank, int world_size, char** chunk, int* my_size, int* read_size);
 void read_transactions(TransactionsList* transactions, char* filename, int rank, int world_size, SupportMap *support_map);
-
+MPI_Datatype *define_MPI_SupportMap();
 #endif

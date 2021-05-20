@@ -3,6 +3,53 @@
 #include "io.h"
 #include "utils.h"
 
+// MPI_Datatype *define_MPI_HashMap_Element() {
+//     // #define INITIAL_SIZE 256
+//     // #define LINEAR_PROBE_LENGTH 8
+//     // #define KEY_STATIC_LENGTH 32
+//     // 
+//     // /* We need to keep keys and values */
+//     // typedef struct _hashmap_element{
+//     //     char key_static[KEY_STATIC_LENGTH];
+//     //     char *key_dynamic;
+//     //     int key_length;
+
+//     //     int in_use;
+//     //     any_t value; // int *
+//     // } hashmap_element;
+
+//     // MPI_Datatype MPI_HASHMAP_ELEMENT, MPI_HASHMAP;
+
+//     // MPI_Aint displacements[5];
+//     // hashmap_element dummy_hashmap_element;
+//     // MPI_Aint base_address;
+//     // MPI_Get_address(&dummy_hashmap_element, &base_address);
+//     // MPI_Get_address(dummy_hashmap_element.key_static, &displacements[0]);
+//     // MPI_Get_address(dummy_hashmap_element.key_dynamic, &displacements[1]);
+//     // MPI_Get_address(&dummy_hashmap_element.key_length, &displacements[2]);
+//     // MPI_Get_address(&dummy_hashmap_element.in_use, &displacements[3]);
+//     // MPI_Get_address(dummy_hashmap_element.value, &displacements[4]);
+//     // displacements[0] = MPI_Aint_diff(displacements[0], base_address);
+//     // displacements[1] = MPI_Aint_diff(displacements[1], base_address);
+//     // displacements[2] = MPI_Aint_diff(displacements[2], base_address);
+//     // displacements[3] = MPI_Aint_diff(displacements[3], base_address);
+//     // displacements[4] = MPI_Aint_diff(displacements[4], base_address);
+//     // MPI_Datatype types[5] = {MPI_CHAR, MPI_CHAR, MPI_INT, MPI_INT, };
+    
+// }
+
+// MPI_Datatype *define_MPI_SupportMap(){
+//     // MPI_Datatype *MPI_HASHMAP_ELEMENT define_MPI_HashMap_Element)=;
+
+//     // /* A hashmap has some maximum size and current size,
+//     // * as well as the data to hold. */
+//     // typedef struct _hashmap_map{
+//     //     int table_size;
+//     //     int size;
+//     //     hashmap_element *data;
+//     // } hashmap_map;
+// }
+
 
 void free_transactions(TransactionsList *transactions){
     size_t n_transactions = cvector_size((*transactions));
@@ -18,15 +65,6 @@ void free_transactions(TransactionsList *transactions){
     *transactions = NULL;
 }
 
-void free_map(SupportMap *support_map){
-    item_count *s, *tmp = NULL;
-    /* free the hash table contents */
-    HASH_ITER(hh, (*support_map), s, tmp) {
-        HASH_DEL((*support_map), s);
-        free(s);
-    }
-    *support_map = NULL;
-}
 
 // void write_file(int rank, TransactionsList transactions){
 //     char filename[10];
@@ -61,18 +99,31 @@ void free_map(SupportMap *support_map){
 // }
 
 void update_supports(Item item, SupportMap *support_map){
-    item_count *s, *tmp = NULL;
+    // item_count *s, *tmp = NULL;
 
-    HASH_FIND_STR((*support_map), item, tmp);
-    if (tmp == NULL) {
-        s = (item_count *)malloc(sizeof *s);
-        s->item = item;
-        s->count = 1;
-        HASH_ADD_KEYPTR(hh, (*support_map), s->item, strlen(s->item), s);
-    }else{
-        tmp->count++;
+    // HASH_FIND_STR((support_map), item, tmp);
+    // if (tmp == NULL) {
+    //     s = (item_count *)malloc(sizeof *s);
+    //     s->item = item;
+    //     s->count = 1;
+    //     HASH_ADD_KEYPTR(hh, (support_map), s->item, strlen(s->item), s);
+    // }else{
+    //     tmp->count++;
+    // }
+    void *value;
+    size_t size = cvector_size(item);
+    // fprintf(stderr, "Looking for %s\n", item);
+    if (hashmap_get(*support_map, item, size, &value) == MAP_MISSING){
+        // fprintf(stderr, "New, putting %s\n", item);
+        value = (void *) malloc(sizeof(int));
+        *((int *) value) = 1;
+        hashmap_put(*support_map, item, size, value);
+        // fprintf(stderr, "Done %s\n", item);
+    } else {
+        // fprintf(stderr, "Already in %s : %d\n", item, * ((int *) value));
+        (*((int *) value))++;
+        // fprintf(stderr, "Incremented\n");
     }
-    
 }
 
 int parse_item(int rank, int i, char *chunk, int chunksize, Transaction *transaction, SupportMap *support_map){
