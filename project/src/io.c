@@ -117,7 +117,10 @@ void update_supports(Item item, SupportMap *support_map){
         // fprintf(stderr, "New, putting %s\n", item);
         value = (void *) malloc(sizeof(int));
         *((int *) value) = 1;
-        hashmap_put(*support_map, item, size, value);
+        if (hashmap_put(*support_map, item, size, value) == MAP_KEY_TOO_LONG){
+            MPI_Finalize();
+            exit(1);
+        }
         // fprintf(stderr, "Done %s\n", item);
     } else {
         // fprintf(stderr, "Already in %s : %d\n", item, * ((int *) value));

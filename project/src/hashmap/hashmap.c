@@ -3,37 +3,19 @@
  */
 
 #include "hashmap.h"
+#include "cvector/cvector.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdint.h>
 
 #define INITIAL_SIZE 256
 #define LINEAR_PROBE_LENGTH 8
-#define KEY_STATIC_LENGTH 32
-
-/* We need to keep keys and values */
-typedef struct _hashmap_element{
-    uint8_t key_static[KEY_STATIC_LENGTH];
-    uint8_t *key_dynamic;
-    int key_length;
-
-    int in_use;
-    any_t value;
-} hashmap_element;
-
-/* A hashmap has some maximum size and current size,
- * as well as the data to hold. */
-typedef struct _hashmap_map{
-    int table_size;
-    int size;
-    hashmap_element *data;
-} hashmap_map;
 
 static uint8_t *get_key(hashmap_element *el)
 {
-    return (el->key_length > KEY_STATIC_LENGTH) ? el->key_dynamic : el->key_static;
+    return el->key;
+    // return (el->key_length > KEY_STATIC_LENGTH) ? el->key_dynamic : el->key_static;
 }
 
 static int key_compare(hashmap_element *el, const void *key, size_t key_length)
@@ -48,11 +30,11 @@ static void clear_element(hashmap_element *el)
 {
     el->in_use = 0;
     el->value = NULL;
-    if (el->key_length > KEY_STATIC_LENGTH)
-    {
-        free(el->key_dynamic);
-        el->key_dynamic = 0;
-    }
+    // if (el->key_length > KEY_STATIC_LENGTH)
+    // {
+    //     free(el->key_dynamic);
+    //     el->key_dynamic = 0;
+    // }
     el->key_length = 0;
 }
 
@@ -298,6 +280,9 @@ int hashmap_rehash(map_t in)
  */
 int hashmap_put(map_t in, const void* key, size_t key_length, any_t value)
 {
+    if (key_length >= KEY_STATIC_LENGTH) {
+        return MAP_KEY_TOO_LONG;
+    }
     int index;
     hashmap_map* m;
 
@@ -317,22 +302,24 @@ int hashmap_put(map_t in, const void* key, size_t key_length, any_t value)
 
     /* Set the value */
     m->data[index].value = value;
-    if (m->data[index].key_length > KEY_STATIC_LENGTH)
-    {
-        free(m->data[index].key_dynamic);
-        m->data[index].key_dynamic = NULL;
-    }
+    // if (m->data[index].key_length > KEY_STATIC_LENGTH)
+    // {
+    //     free(m->data[index].key_dynamic);
+    //     m->data[index].key_dynamic = NULL;
+    // }
 
     m->data[index].key_length = key_length;
-    if (key_length > KEY_STATIC_LENGTH)
-    {
-        m->data[index].key_dynamic = (uint8_t *)malloc(m->data[index].key_length);
-        memcpy(m->data[index].key_dynamic, key, m->data[index].key_length);
-    }
-    else
-    {
-        memcpy(m->data[index].key_static, key, m->data[index].key_length);
-    }
+
+    // if (key_length > KEY_STATIC_LENGTH)
+    // {
+    //     m->data[index].key_dynamic = (uint8_t *)malloc(m->data[index].key_length);
+    //     memcpy(m->data[index].key_dynamic, key, m->data[index].key_length);
+    // }
+    // else
+    // {
+    //     memcpy(m->data[index].key_static, key, m->data[index].key_length);
+    // }
+    memcpy(m->data[index].key, key, m->data[index].key_length);
 
     if (m->data[index].in_use != 1)
     {
@@ -476,9 +463,30 @@ int hashmap_print(map_t in) {
     for(i = 0; i< m->table_size; i++)
         if(m->data[i].in_use != 0) {
             int *value = (int *) (m->data[i].value);
-            uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ? 
-                m->data[i].key_dynamic : m->data[i].key_static;
+            // uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ? 
+            //     m->data[i].key_dynamic : m->data[i].key_static;
+            uint8_t *key = m->data[i].key;
             printf("%s: %d\n", key, *value);
+        }
+
+    return MAP_OK;
+}
+
+int hashmap_get_elements(map_t in, hashmap_element **elements) {
+
+    int i;
+
+    /* Cast the hashmap */
+    hashmap_map* m = (hashmap_map*) in;
+
+    /* On empty hashmap, return immediately */
+    if (hashmap_length(m) <= 0)
+        return MAP_MISSING;
+
+    /* Linear probing */
+    for(i = 0; i< m->table_size; i++)
+        if(m->data[i].in_use != 0) {
+            cvector_push_back((*elements), m->data[i]);
         }
 
     return MAP_OK;

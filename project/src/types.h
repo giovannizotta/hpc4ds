@@ -1,6 +1,7 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef TYPES_H
+#define TYPES_H
 
+#include <stdbool.h> 
 #include "cvector/cvector.h"
 #include "hashmap/hashmap.h"
 

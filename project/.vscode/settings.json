@@ -7,6 +7,17 @@
         "atomic": "cpp",
         "cstddef": "cpp",
         "string_view": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "hashmap.h": "c",
+        "*.tcc": "c",
+        "optional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "functional": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
     }
 }

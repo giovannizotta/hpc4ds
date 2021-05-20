@@ -12,12 +12,34 @@
 #ifndef __HASHMAP_H__
 #define __HASHMAP_H__
 
+#include <stdint.h>
 #include <stdlib.h>
 
+#define MAP_KEY_TOO_LONG -4 /* Key too long*/
 #define MAP_MISSING -3  /* No such element */
 #define MAP_FULL -2 /* Hashmap is full */
 #define MAP_OMEM -1 /* Out of Memory */
 #define MAP_OK 0 /* OK */
+#define KEY_STATIC_LENGTH 16
+
+/* We need to keep keys and values */
+typedef struct _hashmap_element{
+    // uint8_t key_static[KEY_STATIC_LENGTH];
+    // uint8_t *key_dynamic;
+    uint8_t key[KEY_STATIC_LENGTH];
+    int key_length;
+
+    int in_use;
+    any_t value;
+} hashmap_element;
+
+/* A hashmap has some maximum size and current size,
+ * as well as the data to hold. */
+typedef struct _hashmap_map{
+    int table_size;
+    int size;
+    hashmap_element *data;
+} hashmap_map;
 
 /*
  * any_t is a pointer.  This allows you to put arbitrary structures in
@@ -78,5 +100,7 @@ extern void hashmap_free(map_t in);
 extern int hashmap_length(map_t in);
 
 int hashmap_print(map_t in);
+
+int hashmap_get_elements(map_t in, hashmap_element **elements);
 
 #endif // __HASHMAP_H__
