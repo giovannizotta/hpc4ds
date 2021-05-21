@@ -66,37 +66,37 @@ void free_transactions(TransactionsList *transactions){
 }
 
 
-// void write_file(int rank, TransactionsList transactions){
-//     char filename[10];
-//     MPI_File out;
-//     sprintf(filename, "%d.txt", rank);
-//     printf("%d writing output to %s\n", rank, filename);
-//     int ierr = MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &out);
-//     if (ierr){
-//     	printf("Error while writing!\n");
-// 	    MPI_Finalize();
-//         exit(1);
-//     }
-//     size_t n_transactions = cvector_size(transactions);
-//     printf("%d Writing %lu transactions\n", rank, n_transactions);
-//     size_t i, j;
-//     char space[2] = " ";
-//     char newline[2] = "\n"; 
-//     for(i = 0; i < n_transactions; i++){
-//     	size_t n_items = cvector_size((transactions[i]));
-//         // printf("\t%d Writing transaction %d, having %d elements\n", rank, i, n_items);
+void write_transactions(int rank, TransactionsList transactions){
+    char filename[10];
+    MPI_File out;
+    sprintf(filename, "%d.txt", rank);
+    printf("%d writing output to %s\n", rank, filename);
+    int ierr = MPI_File_open(MPI_COMM_WORLD, filename, MPI_MODE_CREATE | MPI_MODE_WRONLY, MPI_INFO_NULL, &out);
+    if (ierr){
+    	printf("Error while writing!\n");
+	    MPI_Finalize();
+        exit(1);
+    }
+    size_t n_transactions = cvector_size(transactions);
+    printf("%d Writing %lu transactions\n", rank, n_transactions);
+    size_t i, j;
+    char space[2] = " ";
+    char newline[2] = "\n"; 
+    for(i = 0; i < n_transactions; i++){
+    	size_t n_items = cvector_size((transactions[i]));
+        // printf("\t%d Writing transaction %d, having %d elements\n", rank, i, n_items);
 
-//         for (j = 0; j < n_items; j++){
-//             size_t item_size = cvector_size((transactions[i][j])) - 1;
-//             // printf("\t\t%d Writing item %d of transaction %d, long %d chars\n", rank, j, i, item_size);
-//             MPI_File_write(out, transactions[i][j], item_size, MPI_CHAR, MPI_STATUS_IGNORE);
-//             if (j < n_items - 1)
-//                 MPI_File_write(out, space, 1, MPI_CHAR, MPI_STATUS_IGNORE);
-//         }
-// 	    MPI_File_write(out, newline, 1, MPI_CHAR, MPI_STATUS_IGNORE);
-//     }
-//     MPI_File_close(&out);
-// }
+        for (j = 0; j < n_items; j++){
+            size_t item_size = cvector_size((transactions[i][j])) - 1;
+            // printf("\t\t%d Writing item %d of transaction %d, long %d chars\n", rank, j, i, item_size);
+            MPI_File_write(out, transactions[i][j], item_size, MPI_CHAR, MPI_STATUS_IGNORE);
+            if (j < n_items - 1)
+                MPI_File_write(out, space, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+        }
+	    MPI_File_write(out, newline, 1, MPI_CHAR, MPI_STATUS_IGNORE);
+    }
+    MPI_File_close(&out);
+}
 
 void update_supports(Item item, SupportMap *support_map){
     // item_count *s, *tmp = NULL;
@@ -110,22 +110,10 @@ void update_supports(Item item, SupportMap *support_map){
     // }else{
     //     tmp->count++;
     // }
-    void *value;
     size_t size = cvector_size(item);
-    // fprintf(stderr, "Looking for %s\n", item);
-    if (hashmap_get(*support_map, item, size, &value) == MAP_MISSING){
-        // fprintf(stderr, "New, putting %s\n", item);
-        value = (void *) malloc(sizeof(int));
-        *((int *) value) = 1;
-        if (hashmap_put(*support_map, item, size, value) == MAP_KEY_TOO_LONG){
-            MPI_Finalize();
-            exit(1);
-        }
-        // fprintf(stderr, "Done %s\n", item);
-    } else {
-        // fprintf(stderr, "Already in %s : %d\n", item, * ((int *) value));
-        (*((int *) value))++;
-        // fprintf(stderr, "Incremented\n");
+    if (hashmap_increment(*support_map, item, size, 1) == MAP_KEY_TOO_LONG){
+        MPI_Finalize();
+        exit(1);
     }
 }
 

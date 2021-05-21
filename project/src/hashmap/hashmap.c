@@ -3,7 +3,7 @@
  */
 
 #include "hashmap.h"
-#include "cvector/cvector.h"
+#include "../cvector/cvector.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,7 +29,8 @@ static int key_compare(hashmap_element *el, const void *key, size_t key_length)
 static void clear_element(hashmap_element *el)
 {
     el->in_use = 0;
-    el->value = NULL;
+    el->value = 0;
+    // el->value = NULL;
     // if (el->key_length > KEY_STATIC_LENGTH)
     // {
     //     free(el->key_dynamic);
@@ -278,7 +279,7 @@ int hashmap_rehash(map_t in)
 /*
  * Add a pointer to the hashmap with some key
  */
-int hashmap_put(map_t in, const void* key, size_t key_length, any_t value)
+int hashmap_put(map_t in, const void* key, size_t key_length, int value)
 {
     if (key_length >= KEY_STATIC_LENGTH) {
         return MAP_KEY_TOO_LONG;
@@ -331,10 +332,21 @@ int hashmap_put(map_t in, const void* key, size_t key_length, any_t value)
     return MAP_OK;
 }
 
+int hashmap_increment(map_t in, const void* key, size_t key_length, int inc){
+
+    int value;
+    if (hashmap_get(in, key, key_length, &value) == MAP_MISSING){
+        value = inc;
+    } else {
+        value += inc;
+    }
+    return hashmap_put(in, key, key_length, value);
+}
+
 /*
  * Get your pointer out of the hashmap with a key
  */
-int hashmap_get(map_t in, const void* key, size_t key_length, any_t *arg)
+int hashmap_get(map_t in, const void* key, size_t key_length, int *arg)
 {
     int i;
     int curr;
@@ -356,7 +368,7 @@ int hashmap_get(map_t in, const void* key, size_t key_length, any_t *arg)
         curr = (curr + 1) % m->table_size;
     }
 
-    *arg = NULL;
+    // *arg = NULL;
     /* Not found */
     return MAP_MISSING;
 }
@@ -433,7 +445,7 @@ void hashmap_free(map_t in)
     hashmap_map* m = (hashmap_map*)in;
 
     for (i = 0; i < m->table_size; i++){
-        free(m->data[i].value);
+        // free(m->data[i].value);
         clear_element(&m->data[i]);
     }
     free(m->data);
@@ -462,11 +474,11 @@ int hashmap_print(map_t in) {
     /* Linear probing */
     for(i = 0; i< m->table_size; i++)
         if(m->data[i].in_use != 0) {
-            int *value = (int *) (m->data[i].value);
+            int value = m->data[i].value;
             // uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ? 
             //     m->data[i].key_dynamic : m->data[i].key_static;
             uint8_t *key = m->data[i].key;
-            printf("%s: %d\n", key, *value);
+            printf("%s: %d\n", key, value);
         }
 
     return MAP_OK;
@@ -491,3 +503,4 @@ int hashmap_get_elements(map_t in, hashmap_element **elements) {
 
     return MAP_OK;
 }
+

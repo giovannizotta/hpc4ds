@@ -25,16 +25,17 @@ int main(int argc, char **argv){
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
-
-    MPI_Datatype *DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
+    // write_transactions(rank, transactions);
+    MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
     get_global_map(rank, world_size, &support_map, DT_HASHMAP_ELEMENT);
+    if (rank == 0)
+        hashmap_print(support_map);
     // MPI_Datatype *MPI_SupportMap = define_MPI_SupportMap();
 
     // item_count *s, *tmp = NULL;
     // HASH_ITER(hh, (support_map), s, tmp) {
     //     printf("%s appears %d\n", s->item, s->count);
     // }
-    // hashmap_print(support_map);
     // printf("%d : %d\n", rank, hashmap_length(support_map));
     // hashmap_print(support_map);
     hashmap_free(support_map);

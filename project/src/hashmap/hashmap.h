@@ -30,7 +30,7 @@ typedef struct _hashmap_element{
     int key_length;
 
     int in_use;
-    any_t value;
+    int value;
 } hashmap_element;
 
 /* A hashmap has some maximum size and current size,
@@ -68,12 +68,12 @@ extern map_t hashmap_new();
 /*
  * Add an element to the hashmap. Return MAP_OK or MAP_OMEM.
  */
-extern int hashmap_put(map_t in, const void* key, size_t key_length, any_t value);
+extern int hashmap_put(map_t in, const void* key, size_t key_length, int value);
 
 /*
  * Get an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_get(map_t in, const void* key, size_t key_length, any_t *arg);
+extern int hashmap_get(map_t in, const void* key, size_t key_length, int *arg);
 
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
@@ -102,5 +102,7 @@ extern int hashmap_length(map_t in);
 int hashmap_print(map_t in);
 
 int hashmap_get_elements(map_t in, hashmap_element **elements);
+
+int hashmap_increment(map_t in, const void* key, size_t key_length, int inc);
 
 #endif // __HASHMAP_H__
