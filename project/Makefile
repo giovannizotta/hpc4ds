@@ -7,7 +7,7 @@ build:
 	@mpicc -Wall src/*.c src/hashmap/*.c -o bin/main.out
 
 run_local:
-	@mpiexec -n $(NTHREAD) bin/main.out $(FILENAME)
+	@mpiexec -n $(NTHREAD) bin/main.out $(FILENAME) 
 
 all: clean build run_local 
 
@@ -16,3 +16,6 @@ clean:
 
 help: 
 	@echo "Not like this"
+
+# valgrind --leak-check=yes \
+# --show-reachable=yes --log-file=nc.vg.%p --suppressions=/usr/share/openmpi/openmpi-valgrind.supp

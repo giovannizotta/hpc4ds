@@ -85,8 +85,27 @@ void send_map(int rank, int world_size, int dest, SupportMap *support_map, MPI_D
 }
 
 
+void broadcast_result(int rank, int world_size, SupportMap *support_map, MPI_Datatype DT_HASHMAP_ELEMENT){
+    if (rank == 0){
+        int size = hashmap_length(*support_map);
+        cvector_vector_type(hashmap_element) elements = NULL;
+        hashmap_get_elements(*support_map, &elements);
+        MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Bcast(elements, size, DT_HASHMAP_ELEMENT, 0, MPI_COMM_WORLD);
+        cvector_free(elements);
+    } else {
+        hashmap_free(*support_map);
+        *support_map = hashmap_new();
+        int size;
+        MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        hashmap_element *elements = (hashmap_element *) malloc (size * sizeof(hashmap_element));
+        MPI_Bcast(elements, size, DT_HASHMAP_ELEMENT, 0, MPI_COMM_WORLD);
+        merge_map(support_map, elements, size);
+        free(elements);
+    }
+}
+
 void get_global_map(int rank, int world_size, SupportMap *support_map, MPI_Datatype DT_HASHMAP_ELEMENT){
-    
     int pow;
     bool sent = false;
     for (pow = 2; pow < 2 * world_size && !sent; pow*=2){
@@ -106,7 +125,7 @@ void get_global_map(int rank, int world_size, SupportMap *support_map, MPI_Datat
             sent = true;
         }
     }
-    // broadcast
+    // broadcast_result(rank, world_size, support_map, DT_HASHMAP_ELEMENT);
     return;
 
 }
