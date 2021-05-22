@@ -22,7 +22,6 @@ static int key_compare(hashmap_element *el, const void *key,
                        size_t key_length) {
     if (el->key_length != key_length)
         return -1;
-
     return memcmp(get_key(el), key, key_length);
 }
 
@@ -212,7 +211,7 @@ int hashmap_hash(map_t in, const void *key, size_t key_length) {
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing */
-    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
+    for (i = 0; i < m->table_size; i++) {
         if (m->data[curr].in_use == 0)
             return curr;
 
@@ -348,12 +347,15 @@ int hashmap_get(map_t in, const void *key, size_t key_length, int *arg) {
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing, if necessary */
-    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
+    for (i = 0; i < m->table_size; i++) {
         if ((m->data[curr].in_use == 1) &&
             (key_compare(&m->data[curr], key, key_length) == 0)) {
             *arg = (m->data[curr].value);
             return MAP_OK;
         }
+        // ATTENTION: Safe iff we never delete
+        if (m->data[curr].in_use == 0)
+            return MAP_MISSING;
         curr = (curr + 1) % m->table_size;
     }
 

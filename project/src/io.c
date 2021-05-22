@@ -83,7 +83,7 @@ void write_keys(int rank, int start, int end, uint8_t **keys) {
     char space[2] = " ";
     char newline[2] = "\n";
     for (i = 0; i < n_keys; i++) {
-        int key_size = strlen(keys[i]);
+        int key_size = strlen((char *)keys[i]);
         MPI_File_write(out, keys[i], key_size, MPI_CHAR, MPI_STATUS_IGNORE);
         if (i < n_keys - 1)
             MPI_File_write(out, space, 1, MPI_CHAR, MPI_STATUS_IGNORE);
@@ -211,7 +211,7 @@ void read_chunk(char *filename, int rank, int world_size, char **chunk,
     MPI_File_get_size(in, &filesize);
 
     //------ READ CHUNK -------
-    *my_size = filesize / world_size + 1;
+    *my_size = (filesize - 1) / world_size + 1;
     start = max(0, rank * (*my_size) - 1);
     *read_size = 2 * (*my_size);
     if (start + *read_size >= filesize) {

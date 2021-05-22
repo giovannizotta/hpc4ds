@@ -58,6 +58,7 @@
         "thread": "c",
         "cinttypes": "c",
         "typeinfo": "c",
-        "bit": "c"
+        "bit": "c",
+        "utils.h": "c"
     }
 }

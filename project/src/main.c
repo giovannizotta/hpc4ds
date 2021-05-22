@@ -7,6 +7,7 @@
 #include "io.h"
 #include "reduce.h"
 #include "sort.h"
+#include "utils.h"
 
 int main(int argc, char **argv) {
     int rank, world_size;
@@ -28,20 +29,23 @@ int main(int argc, char **argv) {
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
     // write_transactions(rank, transactions);
     MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
-    printf("Doing\n");
     get_global_map(rank, world_size, &support_map, DT_HASHMAP_ELEMENT);
-    printf("Done\n");
     if (rank == 0)
         hashmap_print(support_map);
     cvector_vector_type(uint8_t *) keys = NULL;
     hashmap_get_keys(support_map, &keys);
 
-    size_t length = cvector_size(keys) / world_size;
+    size_t length = 1 + (cvector_size(keys) - 1) / world_size;
 
     int *sorted_indices = (int *)malloc(cvector_size(keys) * sizeof(int));
-    sort(keys, sorted_indices, support_map, length * rank, length * (rank + 1));
+    sort(keys, sorted_indices, support_map, length * rank,
+         min(length * (rank + 1), cvector_size(keys)) - 1);
 
-    write_keys(rank, length * rank, length * (rank + 1), keys);
+    if (rank == 0)
+        for (int i = 0; i < length; i++) {
+            printf("%s\n", keys[sorted_indices[i]]);
+        }
+    // write_keys(rank, length * rank, length * (rank + 1) - 1, keys);
 
     // item_count *s, *tmp = NULL;
     // HASH_ITER(hh, (support_map), s, tmp) {
