@@ -5,29 +5,28 @@
 #include "hashmap.h"
 #include "../cvector/cvector.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define INITIAL_SIZE 256
 #define LINEAR_PROBE_LENGTH 8
 
-static uint8_t *get_key(hashmap_element *el)
-{
+static uint8_t *get_key(hashmap_element *el) {
     return el->key;
-    // return (el->key_length > KEY_STATIC_LENGTH) ? el->key_dynamic : el->key_static;
+    // return (el->key_length > KEY_STATIC_LENGTH) ? el->key_dynamic :
+    // el->key_static;
 }
 
-static int key_compare(hashmap_element *el, const void *key, size_t key_length)
-{
+static int key_compare(hashmap_element *el, const void *key,
+                       size_t key_length) {
     if (el->key_length != key_length)
         return -1;
 
     return memcmp(get_key(el), key, key_length);
 }
 
-static void clear_element(hashmap_element *el)
-{
+static void clear_element(hashmap_element *el) {
     el->in_use = 0;
     el->value = 0;
     // el->value = NULL;
@@ -42,13 +41,14 @@ static void clear_element(hashmap_element *el)
 /*
  * Return an empty hashmap, or NULL on failure.
  */
-map_t hashmap_new()
-{
-    hashmap_map* m = (hashmap_map*) malloc(sizeof(hashmap_map));
-    if(!m) goto err;
+map_t hashmap_new() {
+    hashmap_map *m = (hashmap_map *)malloc(sizeof(hashmap_map));
+    if (!m)
+        goto err;
 
-    m->data = (hashmap_element*)calloc(INITIAL_SIZE, sizeof(hashmap_element));
-    if(!m->data) goto err;
+    m->data = (hashmap_element *)calloc(INITIAL_SIZE, sizeof(hashmap_element));
+    if (!m->data)
+        goto err;
 
     m->table_size = INITIAL_SIZE;
     m->size = 0;
@@ -156,22 +156,17 @@ static uint32_t crc32_tab[] = {
     0xbdbdf21cL, 0xcabac28aL, 0x53b39330L, 0x24b4a3a6L, 0xbad03605L,
     0xcdd70693L, 0x54de5729L, 0x23d967bfL, 0xb3667a2eL, 0xc4614ab8L,
     0x5d681b02L, 0x2a6f2b94L, 0xb40bbe37L, 0xc30c8ea1L, 0x5a05df1bL,
-    0x2d02ef8dL
-};
+    0x2d02ef8dL};
 
 /* Return a 32-bit CRC of the contents of the buffer. */
 
-static uint32_t crc32(const unsigned char *s, unsigned int len)
-{
+static uint32_t crc32(const unsigned char *s, unsigned int len) {
     unsigned int i;
     uint32_t crc32val;
 
     crc32val = 0;
-    for (i = 0;  i < len;  i ++)
-    {
-        crc32val =
-            crc32_tab[(crc32val ^ s[i]) & 0xff] ^
-            (crc32val >> 8);
+    for (i = 0; i < len; i++) {
+        crc32val = crc32_tab[(crc32val ^ s[i]) & 0xff] ^ (crc32val >> 8);
     }
     return crc32val;
 }
@@ -179,9 +174,8 @@ static uint32_t crc32(const unsigned char *s, unsigned int len)
 /*
  * Hashing function for a string
  */
-uint32_t hashmap_hash_int(hashmap_map *m, const void* _key, size_t key_length)
-{
-    uint32_t key = crc32((const unsigned char*)_key, key_length);
+uint32_t hashmap_hash_int(hashmap_map *m, const void *_key, size_t key_length) {
+    uint32_t key = crc32((const unsigned char *)_key, key_length);
 
     /* Robert Jenkins' 32 bit Mix Function */
     key += (key << 12);
@@ -203,27 +197,27 @@ uint32_t hashmap_hash_int(hashmap_map *m, const void* _key, size_t key_length)
  * Return the integer of the location in data
  * to store the point to the item, or MAP_FULL.
  */
-int hashmap_hash(map_t in, const void* key, size_t key_length)
-{
+int hashmap_hash(map_t in, const void *key, size_t key_length) {
     int curr;
     int i;
 
     /* Cast the hashmap */
-    hashmap_map* m = (hashmap_map *)in;
+    hashmap_map *m = (hashmap_map *)in;
 
     /* If full, return immediately */
-    if (m->size >= (m->table_size/2)) return MAP_FULL;
+    if (m->size >= (m->table_size / 2))
+        return MAP_FULL;
 
     /* Find the best index */
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing */
-    for (i = 0; i < LINEAR_PROBE_LENGTH; i++)
-    {
+    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
         if (m->data[curr].in_use == 0)
             return curr;
 
-        if ((m->data[curr].in_use == 1) && (key_compare(&m->data[curr], key, key_length) == 0))
+        if ((m->data[curr].in_use == 1) &&
+            (key_compare(&m->data[curr], key, key_length) == 0))
             return curr;
 
         curr = (curr + 1) % m->table_size;
@@ -235,17 +229,17 @@ int hashmap_hash(map_t in, const void* key, size_t key_length)
 /*
  * Doubles the size of the hashmap, and rehashes all the elements
  */
-int hashmap_rehash(map_t in)
-{
+int hashmap_rehash(map_t in) {
     int i;
     int old_size;
-    hashmap_element* curr;
+    hashmap_element *curr;
 
     /* Setup the new elements */
-    hashmap_map *m = (hashmap_map *) in;
-    hashmap_element* temp = (hashmap_element *)
-        calloc(2 * m->table_size, sizeof(hashmap_element));
-    if (!temp) return MAP_OMEM;
+    hashmap_map *m = (hashmap_map *)in;
+    hashmap_element *temp =
+        (hashmap_element *)calloc(2 * m->table_size, sizeof(hashmap_element));
+    if (!temp)
+        return MAP_OMEM;
 
     /* Update the array */
     curr = m->data;
@@ -257,14 +251,14 @@ int hashmap_rehash(map_t in)
     m->size = 0;
 
     /* Rehash the elements */
-    for (i = 0; i < old_size; i++)
-    {
+    for (i = 0; i < old_size; i++) {
         int status;
 
         if (curr[i].in_use == 0)
             continue;
 
-        status = hashmap_put(m, get_key(&curr[i]), curr[i].key_length, curr[i].value);
+        status = hashmap_put(m, get_key(&curr[i]), curr[i].key_length,
+                             curr[i].value);
         clear_element(&curr[i]);
 
         if (status != MAP_OK)
@@ -279,23 +273,20 @@ int hashmap_rehash(map_t in)
 /*
  * Add a pointer to the hashmap with some key
  */
-int hashmap_put(map_t in, const void* key, size_t key_length, int value)
-{
+int hashmap_put(map_t in, const void *key, size_t key_length, int value) {
     if (key_length >= KEY_STATIC_LENGTH) {
         return MAP_KEY_TOO_LONG;
     }
     int index;
-    hashmap_map* m;
+    hashmap_map *m;
 
     /* Cast the hashmap */
     m = (hashmap_map *)in;
 
     /* Find a place to put our value */
     index = hashmap_hash(in, key, key_length);
-    while (index == MAP_FULL)
-    {
-        if (hashmap_rehash(in) == MAP_OMEM)
-        {
+    while (index == MAP_FULL) {
+        if (hashmap_rehash(in) == MAP_OMEM) {
             return MAP_OMEM;
         }
         index = hashmap_hash(in, key, key_length);
@@ -313,7 +304,8 @@ int hashmap_put(map_t in, const void* key, size_t key_length, int value)
 
     // if (key_length > KEY_STATIC_LENGTH)
     // {
-    //     m->data[index].key_dynamic = (uint8_t *)malloc(m->data[index].key_length);
+    //     m->data[index].key_dynamic = (uint8_t
+    //     *)malloc(m->data[index].key_length);
     //     memcpy(m->data[index].key_dynamic, key, m->data[index].key_length);
     // }
     // else
@@ -322,8 +314,7 @@ int hashmap_put(map_t in, const void* key, size_t key_length, int value)
     // }
     memcpy(m->data[index].key, key, m->data[index].key_length);
 
-    if (m->data[index].in_use != 1)
-    {
+    if (m->data[index].in_use != 1) {
         // if not already used
         m->data[index].in_use = 1;
         m->size++;
@@ -332,10 +323,10 @@ int hashmap_put(map_t in, const void* key, size_t key_length, int value)
     return MAP_OK;
 }
 
-int hashmap_increment(map_t in, const void* key, size_t key_length, int inc){
+int hashmap_increment(map_t in, const void *key, size_t key_length, int inc) {
 
     int value;
-    if (hashmap_get(in, key, key_length, &value) == MAP_MISSING){
+    if (hashmap_get(in, key, key_length, &value) == MAP_MISSING) {
         value = inc;
     } else {
         value += inc;
@@ -346,11 +337,10 @@ int hashmap_increment(map_t in, const void* key, size_t key_length, int inc){
 /*
  * Get your pointer out of the hashmap with a key
  */
-int hashmap_get(map_t in, const void* key, size_t key_length, int *arg)
-{
+int hashmap_get(map_t in, const void *key, size_t key_length, int *arg) {
     int i;
     int curr;
-    hashmap_map* m;
+    hashmap_map *m;
 
     /* Cast the hashmap */
     m = (hashmap_map *)in;
@@ -358,10 +348,9 @@ int hashmap_get(map_t in, const void* key, size_t key_length, int *arg)
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing, if necessary */
-    for (i = 0; i < LINEAR_PROBE_LENGTH; i++)
-    {
-        if ((m->data[curr].in_use == 1) && (key_compare(&m->data[curr], key, key_length) == 0))
-        {
+    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
+        if ((m->data[curr].in_use == 1) &&
+            (key_compare(&m->data[curr], key, key_length) == 0)) {
             *arg = (m->data[curr].value);
             return MAP_OK;
         }
@@ -376,11 +365,10 @@ int hashmap_get(map_t in, const void* key, size_t key_length, int *arg)
 /*
  * Remove an element with that key from the map
  */
-int hashmap_remove(map_t in, const void* key, size_t key_length)
-{
+int hashmap_remove(map_t in, const void *key, size_t key_length) {
     int i;
     int curr;
-    hashmap_map* m;
+    hashmap_map *m;
 
     /* Cast the hashmap */
     m = (hashmap_map *)in;
@@ -389,10 +377,9 @@ int hashmap_remove(map_t in, const void* key, size_t key_length)
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing, if necessary */
-    for (i = 0; i < LINEAR_PROBE_LENGTH; i++)
-    {
-        if ((m->data[curr].in_use == 1) && (key_compare(&m->data[curr], key, key_length) == 0))
-        {
+    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
+        if ((m->data[curr].in_use == 1) &&
+            (key_compare(&m->data[curr], key, key_length) == 0)) {
             /* Blank out the fields */
             clear_element(&m->data[curr]);
 
@@ -439,12 +426,11 @@ int hashmap_iterate(map_t in, PFany f, any_t item) {
 #endif
 
 /* Deallocate the hashmap */
-void hashmap_free(map_t in)
-{
+void hashmap_free(map_t in) {
     size_t i;
-    hashmap_map* m = (hashmap_map*)in;
+    hashmap_map *m = (hashmap_map *)in;
 
-    for (i = 0; i < m->table_size; i++){
+    for (i = 0; i < m->table_size; i++) {
         // free(m->data[i].value);
         clear_element(&m->data[i]);
     }
@@ -453,29 +439,29 @@ void hashmap_free(map_t in)
 }
 
 /* Return the length of the hashmap */
-int hashmap_length(map_t in)
-{
-    hashmap_map* m = (hashmap_map *)in;
-    if (m != NULL) return m->size;
-    else return 0;
+int hashmap_length(map_t in) {
+    hashmap_map *m = (hashmap_map *)in;
+    if (m != NULL)
+        return m->size;
+    else
+        return 0;
 }
-
 
 int hashmap_print(map_t in) {
     int i;
 
     /* Cast the hashmap */
-    hashmap_map* m = (hashmap_map*) in;
+    hashmap_map *m = (hashmap_map *)in;
 
     /* On empty hashmap, return immediately */
     if (hashmap_length(m) <= 0)
         return MAP_MISSING;
 
     /* Linear probing */
-    for(i = 0; i< m->table_size; i++)
-        if(m->data[i].in_use != 0) {
+    for (i = 0; i < m->table_size; i++)
+        if (m->data[i].in_use != 0) {
             int value = m->data[i].value;
-            // uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ? 
+            // uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ?
             //     m->data[i].key_dynamic : m->data[i].key_static;
             uint8_t *key = m->data[i].key;
             printf("%s: %d\n", key, value);
@@ -484,23 +470,46 @@ int hashmap_print(map_t in) {
     return MAP_OK;
 }
 
-int hashmap_get_elements(map_t in, hashmap_element **elements) {
+int hashmap_get_elements(map_t in,
+                         cvector_vector_type(hashmap_element) * elements) {
 
     int i;
 
     /* Cast the hashmap */
-    hashmap_map* m = (hashmap_map*) in;
+    hashmap_map *m = (hashmap_map *)in;
 
     /* On empty hashmap, return immediately */
     if (hashmap_length(m) <= 0)
         return MAP_MISSING;
 
     /* Linear probing */
-    for(i = 0; i< m->table_size; i++)
-        if(m->data[i].in_use != 0) {
+    for (i = 0; i < m->table_size; i++)
+        if (m->data[i].in_use != 0) {
             cvector_push_back((*elements), m->data[i]);
         }
 
     return MAP_OK;
 }
 
+int hashmap_get_keys(map_t in, uint8_t ***keys) {
+    int i;
+
+    // uint8_t **k[16];
+    /* Cast the hashmap */
+    hashmap_map *m = (hashmap_map *)in;
+
+    /* On empty hashmap, return immediately */
+    if (hashmap_length(m) <= 0)
+        return MAP_MISSING;
+
+    // cvector_grow((*keys), m->size);
+    // cvector_set_size((*keys), m->size);
+    /* Linear probing */
+    for (i = 0; i < m->table_size; i++)
+        if (m->data[i].in_use != 0) {
+            // memcpy((*keys)[i], m->data[i].key, m->data[i].key_length);
+            cvector_push_back((*keys), m->data[i].key);
+        }
+
+    return MAP_OK;
+}

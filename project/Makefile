@@ -4,10 +4,11 @@ NTHREAD?=4
 main: help
 
 build:
-	@mpicc -Wall src/*.c src/hashmap/*.c -o bin/main.out
+	@mpicc -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
 
 run_local:
-	@mpiexec -n $(NTHREAD) bin/main.out $(FILENAME) 
+	@mpiexec -n $(NTHREAD) \
+	bin/main.out $(FILENAME) 
 
 all: clean build run_local 
 
@@ -18,4 +19,4 @@ help:
 	@echo "Not like this"
 
 # valgrind --leak-check=yes \
-# --show-reachable=yes --log-file=nc.vg.%p --suppressions=/usr/share/openmpi/openmpi-valgrind.supp
+# --show-reachable=yes --log-file=nc.vg.%p --suppressions=/usr/share/openmpi/openmpi-valgrind.supp \

@@ -1,32 +1,38 @@
 /*
  * Generic hashmap manipulation functions
  *
- * Originally by Elliot C Back - http://elliottback.com/wp/hashmap-implementation-in-c/
+ * Originally by Elliot C Back -
+ * http://elliottback.com/wp/hashmap-implementation-in-c/
  *
- * Modified by Pete Warden to fix a serious performance problem, support strings as keys
- * and removed thread synchronization - http://petewarden.typepad.com
+ * Modified by Pete Warden to fix a serious performance problem, support strings
+ * as keys and removed thread synchronization - http://petewarden.typepad.com
  *
  * Modified by Ziga Lenarcic for variable size binary keys (including strings).
- * Store keys in the hashmap with small string optimization, fix bugs with size counting etc.
+ * Store keys in the hashmap with small string optimization, fix bugs with size
+ * counting etc.
  */
 #ifndef __HASHMAP_H__
 #define __HASHMAP_H__
 
+#include "../cvector/cvector.h"
 #include <stdint.h>
 #include <stdlib.h>
 
 #define MAP_KEY_TOO_LONG -4 /* Key too long*/
-#define MAP_MISSING -3  /* No such element */
-#define MAP_FULL -2 /* Hashmap is full */
-#define MAP_OMEM -1 /* Out of Memory */
-#define MAP_OK 0 /* OK */
+#define MAP_MISSING -3      /* No such element */
+#define MAP_FULL -2         /* Hashmap is full */
+#define MAP_OMEM -1         /* Out of Memory */
+#define MAP_OK 0            /* OK */
 #define KEY_STATIC_LENGTH 16
 
+typedef uint8_t hashmap_key[KEY_STATIC_LENGTH];
+
 /* We need to keep keys and values */
-typedef struct _hashmap_element{
+typedef struct _hashmap_element {
     // uint8_t key_static[KEY_STATIC_LENGTH];
     // uint8_t *key_dynamic;
-    uint8_t key[KEY_STATIC_LENGTH];
+
+    hashmap_key key;
     int key_length;
 
     int in_use;
@@ -35,7 +41,7 @@ typedef struct _hashmap_element{
 
 /* A hashmap has some maximum size and current size,
  * as well as the data to hold. */
-typedef struct _hashmap_map{
+typedef struct _hashmap_map {
     int table_size;
     int size;
     hashmap_element *data;
@@ -68,17 +74,17 @@ extern map_t hashmap_new();
 /*
  * Add an element to the hashmap. Return MAP_OK or MAP_OMEM.
  */
-extern int hashmap_put(map_t in, const void* key, size_t key_length, int value);
+extern int hashmap_put(map_t in, const void *key, size_t key_length, int value);
 
 /*
  * Get an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_get(map_t in, const void* key, size_t key_length, int *arg);
+extern int hashmap_get(map_t in, const void *key, size_t key_length, int *arg);
 
 /*
  * Remove an element from the hashmap. Return MAP_OK or MAP_MISSING.
  */
-extern int hashmap_remove(map_t in, const void* key, size_t key_length);
+extern int hashmap_remove(map_t in, const void *key, size_t key_length);
 
 /*
  * Iteratively call f with argument (item, data) for
@@ -87,7 +93,7 @@ extern int hashmap_remove(map_t in, const void* key, size_t key_length);
  * than MAP_OK the traversal is terminated. f must
  * not reenter any hashmap functions, or deadlock may arise.
  */
-//extern int hashmap_iterate(map_t in, PFany f, any_t item);
+// extern int hashmap_iterate(map_t in, PFany f, any_t item);
 
 /*
  * Free the hashmap
@@ -101,8 +107,11 @@ extern int hashmap_length(map_t in);
 
 int hashmap_print(map_t in);
 
-int hashmap_get_elements(map_t in, hashmap_element **elements);
+int hashmap_get_elements(map_t in,
+                         cvector_vector_type(hashmap_element) * elements);
 
-int hashmap_increment(map_t in, const void* key, size_t key_length, int inc);
+int hashmap_get_keys(map_t in, uint8_t ***keys);
+
+int hashmap_increment(map_t in, const void *key, size_t key_length, int inc);
 
 #endif // __HASHMAP_H__
