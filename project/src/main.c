@@ -23,37 +23,36 @@ int main(int argc, char **argv) {
         MPI_Finalize();
         exit(1);
     }
+    printf("%d A\n", rank);
 
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
+    printf("%d B\n", rank);
     // write_transactions(rank, transactions);
     MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
     get_global_map(rank, world_size, &support_map, DT_HASHMAP_ELEMENT);
+    printf("%d C\n", rank);
     // if (rank == 0)
     //     hashmap_print(support_map);
     cvector_vector_type(uint8_t *) keys = NULL;
     hashmap_get_keys(support_map, &keys);
-    printf("Keys got\n");
-    assert(keys != NULL);
+    printf("%d D\n", rank);
 
     size_t length = 1 + (cvector_size(keys) - 1) / world_size;
 
+    printf("%d E\n", rank);
     int *sorted_indices = (int *)malloc(cvector_size(keys) * sizeof(int));
-    printf("Indices allocated\n");
-    assert(sorted_indices != NULL);
 
-    sort(keys, sorted_indices, support_map, length * rank,
-         min(length * (rank + 1), cvector_size(keys)) - 1);
+    int start = length * rank,
+        end = min(length * (rank + 1), cvector_size(keys)) - 1;
+    // printf("### %d length: %d, nkeys: %d, start: %d, end: %d\n", rank,
+    // length,
+    //        cvector_size(keys), start, end);
+    printf("%d F\n", rank);
 
-    if (rank == 0) {
-        int value;
-        for (int i = 0; i < length; i++) {
-            hashmap_get(support_map, keys[sorted_indices[i]],
-                        ulength(keys[sorted_indices[i]]), &value);
-            printf("%s: %d\n", keys[sorted_indices[i]], value);
-        }
-    }
+    sort(keys, sorted_indices, support_map, start, end);
+
     // write_keys(rank, length * rank, length * (rank + 1) - 1, keys);
 
     // item_count *s, *tmp = NULL;
@@ -62,10 +61,29 @@ int main(int argc, char **argv) {
     // }
     // printf("%d : %d\n", rank, hashmap_length(support_map));
     // hashmap_print(support_map);
+    printf("%d G\n", rank);
+    get_sorted_indices(rank, world_size, sorted_indices, start, end, length,
+                       &support_map, keys);
+    printf("%d H\n", rank);
+
+    if (rank == 0) {
+        int value;
+        for (int i = 0; i < cvector_size(keys); i++) {
+            hashmap_get(support_map, keys[sorted_indices[i]],
+                        ulength(keys[sorted_indices[i]]), &value);
+            printf("%s: %d\n", keys[sorted_indices[i]], value);
+        }
+    }
+    printf("%d I\n", rank);
+    // [3,2,0,1,    4,5,6,7]
     hashmap_free(support_map);
+    printf("%d J\n", rank);
     free(sorted_indices);
+    printf("%d K\n", rank);
     cvector_free(keys);
+    printf("%d L\n", rank);
     free_transactions(&transactions);
+    printf("%d M\n", rank);
     MPI_Finalize();
 
     return 0;

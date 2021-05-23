@@ -8,7 +8,11 @@ build:
 
 run_local:
 	@mpiexec -n $(NTHREAD) \
-	bin/main.out $(FILENAME) 
+	bin/main.out $(FILENAME)
+
+time_run_local:
+	@/usr/bin/time -v mpiexec -n $(NTHREAD) \
+	bin/main.out $(FILENAME)
 
 all: clean build run_local 
 
@@ -17,6 +21,7 @@ clean:
 
 help: 
 	@echo "Not like this"
+
 
 # valgrind --leak-check=yes \
 # --show-reachable=yes --log-file=nc.vg.%p --suppressions=/usr/share/openmpi/openmpi-valgrind.supp \

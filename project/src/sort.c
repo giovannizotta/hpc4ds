@@ -51,7 +51,6 @@ void insertion_sort(uint8_t **keys, int *sorted_indices, int start, int end,
         // }
         // printf("\n");
     }
-    printf("Insertion sort ended!!!\n");
 }
 
 void swap(int *a, int i, int j) {

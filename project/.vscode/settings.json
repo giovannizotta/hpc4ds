@@ -59,6 +59,7 @@
         "cinttypes": "c",
         "typeinfo": "c",
         "bit": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "stdio.h": "c"
     }
 }
