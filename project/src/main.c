@@ -30,21 +30,30 @@ int main(int argc, char **argv) {
     // write_transactions(rank, transactions);
     MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
     get_global_map(rank, world_size, &support_map, DT_HASHMAP_ELEMENT);
-    if (rank == 0)
-        hashmap_print(support_map);
+    // if (rank == 0)
+    //     hashmap_print(support_map);
     cvector_vector_type(uint8_t *) keys = NULL;
     hashmap_get_keys(support_map, &keys);
+    printf("Keys got\n");
+    assert(keys != NULL);
 
     size_t length = 1 + (cvector_size(keys) - 1) / world_size;
 
     int *sorted_indices = (int *)malloc(cvector_size(keys) * sizeof(int));
+    printf("Indices allocated\n");
+    assert(sorted_indices != NULL);
+
     sort(keys, sorted_indices, support_map, length * rank,
          min(length * (rank + 1), cvector_size(keys)) - 1);
 
-    if (rank == 0)
+    if (rank == 0) {
+        int value;
         for (int i = 0; i < length; i++) {
-            printf("%s\n", keys[sorted_indices[i]]);
+            hashmap_get(support_map, keys[sorted_indices[i]],
+                        ulength(keys[sorted_indices[i]]), &value);
+            printf("%s: %d\n", keys[sorted_indices[i]], value);
         }
+    }
     // write_keys(rank, length * rank, length * (rank + 1) - 1, keys);
 
     // item_count *s, *tmp = NULL;

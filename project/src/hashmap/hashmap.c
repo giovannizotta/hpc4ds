@@ -10,7 +10,7 @@
 #include <string.h>
 
 #define INITIAL_SIZE 256
-#define LINEAR_PROBE_LENGTH 8
+#define LINEAR_PROBE_LENGTH 32
 
 static uint8_t *get_key(hashmap_element *el) {
     return el->key;
@@ -211,7 +211,7 @@ int hashmap_hash(map_t in, const void *key, size_t key_length) {
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing */
-    for (i = 0; i < m->table_size; i++) {
+    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
         if (m->data[curr].in_use == 0)
             return curr;
 
@@ -347,7 +347,7 @@ int hashmap_get(map_t in, const void *key, size_t key_length, int *arg) {
     curr = hashmap_hash_int(m, key, key_length);
 
     /* Linear probing, if necessary */
-    for (i = 0; i < m->table_size; i++) {
+    for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
         if ((m->data[curr].in_use == 1) &&
             (key_compare(&m->data[curr], key, key_length) == 0)) {
             *arg = (m->data[curr].value);
@@ -466,7 +466,7 @@ int hashmap_print(map_t in) {
             // uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ?
             //     m->data[i].key_dynamic : m->data[i].key_static;
             uint8_t *key = m->data[i].key;
-            printf("%s: %d\n", key, value);
+            printf("%s: %d\n", (char *)key, value);
         }
 
     return MAP_OK;
@@ -510,6 +510,7 @@ int hashmap_get_keys(map_t in, uint8_t ***keys) {
     for (i = 0; i < m->table_size; i++)
         if (m->data[i].in_use != 0) {
             // memcpy((*keys)[i], m->data[i].key, m->data[i].key_length);
+            // if (m->data[i].value > 1)
             cvector_push_back((*keys), m->data[i].key);
         }
 
