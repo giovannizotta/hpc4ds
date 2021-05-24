@@ -61,6 +61,7 @@
         "bit": "c",
         "utils.h": "c",
         "stdio.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "string.h": "c"
     }
 }

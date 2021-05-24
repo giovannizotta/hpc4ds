@@ -85,9 +85,9 @@ void send_map(int rank, int world_size, int dest, SupportMap *support_map,
     // printf("Free elements\n");
 }
 
-void broadcast_result(int rank, int world_size, SupportMap *support_map,
-                      hashmap_element **items_count, int *num_items,
-                      MPI_Datatype DT_HASHMAP_ELEMENT) {
+void broadcast_map(int rank, int world_size, SupportMap *support_map,
+                   hashmap_element **items_count, int *num_items,
+                   MPI_Datatype DT_HASHMAP_ELEMENT) {
     if (rank == 0) {
         int size = hashmap_length(*support_map);
         cvector_vector_type(hashmap_element) elements = NULL;
@@ -138,8 +138,8 @@ void get_global_map(int rank, int world_size, SupportMap *support_map,
     /** REINITIALIZE MAP TO HAVE ELEMENTS IN THE SAME ORDER AS OTHER PROCESSES
      * **/
 
-    broadcast_result(rank, world_size, support_map, items_count, num_items,
-                     DT_HASHMAP_ELEMENT);
+    broadcast_map(rank, world_size, support_map, items_count, num_items,
+                  DT_HASHMAP_ELEMENT);
 
     return;
 }
@@ -245,6 +245,11 @@ void send_indices(int rank, int world_size, int dest, int *sorted_indices,
     // printf("Free elements\n");
 }
 
+void broadcast_indices(int rank, int world_size, int *sorted_indices,
+                       int num_items) {
+    MPI_Bcast(sorted_indices, num_items, MPI_INT, 0, MPI_COMM_WORLD);
+}
+
 void get_sorted_indices(int rank, int world_size, int *sorted_indices,
                         int start, int end, int length,
                         hashmap_element *items_count, int num_items) {
@@ -273,6 +278,6 @@ void get_sorted_indices(int rank, int world_size, int *sorted_indices,
             sent = true;
         }
     }
-    // broadcast_result(rank, world_size, support_map, DT_HASHMAP_ELEMENT);
+    broadcast_indices(rank, world_size, sorted_indices, num_items);
     return;
 }

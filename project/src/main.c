@@ -7,6 +7,7 @@
 #include "io.h"
 #include "reduce.h"
 #include "sort.h"
+#include "tree.h"
 #include "utils.h"
 
 int main(int argc, char **argv) {
@@ -54,9 +55,22 @@ int main(int argc, char **argv) {
             int value = items_count[sorted_indices[i]].value;
             uint8_t *key = items_count[sorted_indices[i]].key;
             printf("%s: %d\n", key, value);
+            // items_count[i] = items_count[sorted_indices[i]];
         }
     }
 
+    map_t index_map = hashmap_new();
+    for (int i = 0; i < num_items; i++) {
+        uint8_t *key = items_count[sorted_indices[i]].key;
+        int key_length = items_count[sorted_indices[i]].key_length;
+        hashmap_put(index_map, key, key_length, sorted_indices[i]);
+    }
+
+    printf("%d A.\n", rank);
+    Tree tree = build_MPI_tree(rank, world_size, transactions, index_map,
+                               items_count, num_items, sorted_indices);
+
+    free_tree(tree);
     /*--- FREE MEMORY ---*/
     free(sorted_indices);
     if (rank != 0)

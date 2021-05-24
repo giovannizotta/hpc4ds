@@ -138,15 +138,18 @@ void parallel_quick_sort(hashmap_element *items_count, int num_items,
  * Source: doi=10.1.1.100.809
  * (https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.100.809&rep=rep1&type=pdf#page=31)
  */
+
 void sort(hashmap_element *items_count, int num_items, int *sorted_indices,
           int start, int end, int num_threads) {
 
     cvector_vector_type(int) stack = NULL;
     int num_busy_threads = 0;
-#pragma omp parallel shared(items_count, num_items, sorted_indices, stack,     \
-                            num_threads, num_busy_threads)
+    int i;
+
+#pragma omp parallel default(none)                                             \
+    shared(items_count, num_items, sorted_indices, start, end, stack,          \
+           num_threads, num_busy_threads) private(i) num_threads(num_threads)
     {
-        int i;
 #pragma omp for
         for (i = 0; i < num_items; i++) {
             sorted_indices[i] = i;
@@ -159,4 +162,5 @@ void sort(hashmap_element *items_count, int num_items, int *sorted_indices,
                                 start, &stack, &num_busy_threads, &num_threads);
         }
     }
+    cvector_free(stack);
 }
