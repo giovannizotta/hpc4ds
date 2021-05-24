@@ -60,6 +60,7 @@
         "typeinfo": "c",
         "bit": "c",
         "utils.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "stdbool.h": "c"
     }
 }

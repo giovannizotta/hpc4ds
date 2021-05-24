@@ -26,7 +26,7 @@ static int key_compare(hashmap_element *el, const void *key,
 }
 
 static void clear_element(hashmap_element *el) {
-    el->in_use = 0;
+    el->in_use = false;
     el->value = 0;
     // el->value = NULL;
     // if (el->key_length > KEY_STATIC_LENGTH)
@@ -212,10 +212,10 @@ int hashmap_hash(map_t in, const void *key, size_t key_length) {
 
     /* Linear probing */
     for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
-        if (m->data[curr].in_use == 0)
+        if (!m->data[curr].in_use)
             return curr;
 
-        if ((m->data[curr].in_use == 1) &&
+        if ((m->data[curr].in_use) &&
             (key_compare(&m->data[curr], key, key_length) == 0))
             return curr;
 
@@ -253,7 +253,7 @@ int hashmap_rehash(map_t in) {
     for (i = 0; i < old_size; i++) {
         int status;
 
-        if (curr[i].in_use == 0)
+        if (!curr[i].in_use)
             continue;
 
         status = hashmap_put(m, get_key(&curr[i]), curr[i].key_length,
@@ -313,9 +313,9 @@ int hashmap_put(map_t in, const void *key, size_t key_length, int value) {
     // }
     memcpy(m->data[index].key, key, m->data[index].key_length);
 
-    if (m->data[index].in_use != 1) {
+    if (!m->data[index].in_use) {
         // if not already used
-        m->data[index].in_use = 1;
+        m->data[index].in_use = true;
         m->size++;
     }
 
@@ -348,14 +348,14 @@ int hashmap_get(map_t in, const void *key, size_t key_length, int *arg) {
 
     /* Linear probing, if necessary */
     for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
-        if ((m->data[curr].in_use == 1) &&
+        if ((m->data[curr].in_use) &&
             (key_compare(&m->data[curr], key, key_length) == 0)) {
             *arg = (m->data[curr].value);
             return MAP_OK;
         }
-        // ATTENTION: Safe iff we never delete
-        if (m->data[curr].in_use == 0)
-            return MAP_MISSING;
+        // // ATTENTION: Safe iff we never delete
+        // if (!m->data[curr].in_use)
+        //     return MAP_MISSING;
         curr = (curr + 1) % m->table_size;
     }
 
@@ -380,7 +380,7 @@ int hashmap_remove(map_t in, const void *key, size_t key_length) {
 
     /* Linear probing, if necessary */
     for (i = 0; i < LINEAR_PROBE_LENGTH; i++) {
-        if ((m->data[curr].in_use == 1) &&
+        if ((m->data[curr].in_use) &&
             (key_compare(&m->data[curr], key, key_length) == 0)) {
             /* Blank out the fields */
             clear_element(&m->data[curr]);
@@ -461,7 +461,7 @@ int hashmap_print(map_t in) {
 
     /* Linear probing */
     for (i = 0; i < m->table_size; i++)
-        if (m->data[i].in_use != 0) {
+        if (m->data[i].in_use) {
             int value = m->data[i].value;
             // uint8_t *key = (m->data[i].key_length > KEY_STATIC_LENGTH) ?
             //     m->data[i].key_dynamic : m->data[i].key_static;
@@ -486,14 +486,16 @@ int hashmap_get_elements(map_t in,
 
     /* Linear probing */
     for (i = 0; i < m->table_size; i++)
-        if (m->data[i].in_use != 0) {
+        if (m->data[i].in_use) {
             cvector_push_back((*elements), m->data[i]);
         }
 
     return MAP_OK;
 }
-
-int hashmap_get_keys(map_t in, uint8_t ***keys) {
+/**
+ * Puts into vector keys *references* to hashmap keys
+ */
+int hashmap_get_keys(map_t in, cvector_vector_type(uint8_t *) * keys) {
     int i;
 
     // uint8_t **k[16];
@@ -508,7 +510,7 @@ int hashmap_get_keys(map_t in, uint8_t ***keys) {
     // cvector_set_size((*keys), m->size);
     /* Linear probing */
     for (i = 0; i < m->table_size; i++)
-        if (m->data[i].in_use != 0) {
+        if (m->data[i].in_use) {
             // memcpy((*keys)[i], m->data[i].key, m->data[i].key_length);
             // if (m->data[i].value > 1)
             cvector_push_back((*keys), m->data[i].key);

@@ -27,39 +27,42 @@ int main(int argc, char **argv) {
     if (argc > 2)
         num_threads = atoi(argv[2]);
 
+    /*--- READ TRANSACTION AND SUPPORT MAP ---*/
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
     // write_transactions(rank, transactions);
     MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
-    get_global_map(rank, world_size, &support_map, DT_HASHMAP_ELEMENT);
+    hashmap_element *items_count = NULL;
+    int num_items;
+    get_global_map(rank, world_size, &support_map, &items_count, &num_items,
+                   DT_HASHMAP_ELEMENT);
+    hashmap_free(support_map);
 
-    cvector_vector_type(uint8_t *) keys = NULL;
-    hashmap_get_keys(support_map, &keys);
-
-    size_t length = 1 + (cvector_size(keys) - 1) / world_size;
-
-    int *sorted_indices = (int *)malloc(cvector_size(keys) * sizeof(int));
-
-    int start = length * rank,
-        end = min(length * (rank + 1), cvector_size(keys)) - 1;
-
-    sort(keys, sorted_indices, support_map, start, end, num_threads);
-
+    /*--- SORT ITEMS BY SUPPORT ---*/
+    size_t length = 1 + (num_items - 1) / world_size;
+    int *sorted_indices = (int *)malloc(num_items * sizeof(int));
+    int start = length * rank;
+    int end = min(length * (rank + 1), num_items) - 1;
+    sort(items_count, num_items, sorted_indices, start, end, num_threads);
     get_sorted_indices(rank, world_size, sorted_indices, start, end, length,
-                       &support_map, keys);
+                       items_count, num_items);
 
+    /*--- PRINT ITEMS SORTED ---*/
     if (rank == 0) {
-        int value;
-        for (int i = 0; i < cvector_size(keys); i++) {
-            hashmap_get(support_map, keys[sorted_indices[i]],
-                        ulength(keys[sorted_indices[i]]), &value);
-            printf("%s: %d\n", keys[sorted_indices[i]], value);
+        for (int i = 0; i < num_items; i++) {
+            int value = items_count[sorted_indices[i]].value;
+            uint8_t *key = items_count[sorted_indices[i]].key;
+            printf("%s: %d\n", key, value);
         }
     }
-    hashmap_free(support_map);
+
+    /*--- FREE MEMORY ---*/
     free(sorted_indices);
-    cvector_free(keys);
+    if (rank != 0)
+        free(items_count);
+    else
+        cvector_free(items_count);
     free_transactions(&transactions);
     MPI_Finalize();
 

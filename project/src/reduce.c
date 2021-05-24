@@ -19,8 +19,7 @@ MPI_Datatype define_datatype_hashmap_element() {
     displacements[1] = MPI_Aint_diff(displacements[1], base_address);
     displacements[2] = MPI_Aint_diff(displacements[2], base_address);
     displacements[3] = MPI_Aint_diff(displacements[3], base_address);
-
-    MPI_Datatype types[4] = {MPI_UNSIGNED_CHAR, MPI_INT, MPI_INT, MPI_INT};
+    MPI_Datatype types[4] = {MPI_UNSIGNED_CHAR, MPI_INT, MPI_C_BOOL, MPI_INT};
     MPI_Type_create_struct(4, lengths, displacements, types,
                            &DT_HASHMAP_ELEMENT);
     MPI_Type_commit(&DT_HASHMAP_ELEMENT);
@@ -87,6 +86,7 @@ void send_map(int rank, int world_size, int dest, SupportMap *support_map,
 }
 
 void broadcast_result(int rank, int world_size, SupportMap *support_map,
+                      hashmap_element **items_count, int *num_items,
                       MPI_Datatype DT_HASHMAP_ELEMENT) {
     if (rank == 0) {
         int size = hashmap_length(*support_map);
@@ -94,21 +94,25 @@ void broadcast_result(int rank, int world_size, SupportMap *support_map,
         hashmap_get_elements(*support_map, &elements);
         MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
         MPI_Bcast(elements, size, DT_HASHMAP_ELEMENT, 0, MPI_COMM_WORLD);
-        cvector_free(elements);
+        *items_count = elements;
+        *num_items = size;
     } else {
-        hashmap_free(*support_map);
-        *support_map = hashmap_new();
+        // hashmap_free(*support_map);
+        // *support_map = hashmap_new();
         int size;
         MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
         hashmap_element *elements =
             (hashmap_element *)malloc(size * sizeof(hashmap_element));
         MPI_Bcast(elements, size, DT_HASHMAP_ELEMENT, 0, MPI_COMM_WORLD);
-        merge_map(support_map, elements, size);
-        free(elements);
+        // merge_map(support_map, elements, size);
+        // free(elements);
+        *items_count = elements;
+        *num_items = size;
     }
 }
 
 void get_global_map(int rank, int world_size, SupportMap *support_map,
+                    hashmap_element **items_count, int *num_items,
                     MPI_Datatype DT_HASHMAP_ELEMENT) {
     int pow;
     bool sent = false;
@@ -134,64 +138,36 @@ void get_global_map(int rank, int world_size, SupportMap *support_map,
     /** REINITIALIZE MAP TO HAVE ELEMENTS IN THE SAME ORDER AS OTHER PROCESSES
      * **/
 
-    broadcast_result(rank, world_size, support_map, DT_HASHMAP_ELEMENT);
+    broadcast_result(rank, world_size, support_map, items_count, num_items,
+                     DT_HASHMAP_ELEMENT);
 
-    if (rank == 0) {
-        SupportMap tmp_map = hashmap_new();
-
-        int size = hashmap_length(*support_map);
-        cvector_vector_type(hashmap_element) elements = NULL;
-        hashmap_get_elements(*support_map, &elements);
-        merge_map(&tmp_map, elements, size);
-        SupportMap tmp_ptr = *support_map;
-        *support_map = tmp_map;
-        hashmap_free(tmp_ptr);
-        cvector_free(elements);
-    }
     return;
 }
 
 void merge_indices(int rank, int *sorted_indices, int start1, int end1,
-                   int start2, int end2, SupportMap *support_map,
-                   uint8_t **keys) {
+                   int start2, int end2, hashmap_element *items_count,
+                   int num_items) {
 
     int tot_size = end1 - start1 + 1 + end2 - start2 + 1;
-    assert(start1 + tot_size <= hashmap_length(*support_map));
-    assert(end1 <= hashmap_length(*support_map));
-    if (end2 > hashmap_length(*support_map)) {
-        printf("%d end2: %d, hashmaplenght: %d\n", rank, end2,
-               hashmap_length(*support_map));
+    assert(start1 + tot_size <= num_items);
+    assert(end1 <= num_items);
+    if (end2 > num_items) {
+        printf("%d end2: %d, hashmaplenght: %d\n", rank, end2, num_items);
     }
-    assert(end2 <= hashmap_length(*support_map));
+    assert(end2 <= num_items);
     // printf("MERGING %d-%d and %d-%d (totsize:%d)\n", start1, end1, start2,
     // end2,
     //        tot_size);
-    if (rank == 0)
-        printf("Allocating %d buffer\n", tot_size);
     int *tmp = (int *)malloc(tot_size * sizeof(int));
-    if (tmp == NULL)
-        printf("ERROR \n");
     assert(tmp != NULL);
-
-    if (rank == 0)
-        printf("Allocated %d buffer\n", tot_size);
 
     int i = 0, j, i1 = start1, i2 = start2;
 
     // printf("%d-%d A.\n", start1, end2);
     while (i1 <= end1 && i2 <= end2) {
-        int v1, v2, l1, l2;
-        // printf("%d-%d i: %d, i1: %d, i2: %d.\n", start1, end2, i, i1, i2);
-        uint8_t *k1 = keys[sorted_indices[i1]], *k2 = keys[sorted_indices[i2]];
-        l1 = ulength(k1);
-        l2 = ulength(k2);
-        // printf("%d-%d i: %d, i1: %d, i2: %d. %s (%d) %s (%d) OK\n", start1,
-        //        end2, i, i1, i2, k1, l1, k2, l2);
+        int v1 = items_count[sorted_indices[i1]].value;
+        int v2 = items_count[sorted_indices[i2]].value;
 
-        assert(hashmap_get((*support_map), k1, l1, &v1) == MAP_OK);
-        // printf("%d-%d i: %d, i1: %d, i2: %d. K1\n", start1, end2, i, i1, i2);
-        assert(hashmap_get((*support_map), k2, l2, &v2) == MAP_OK);
-        // printf("%d-%d i: %d, i1: %d, i2: %d. K2\n", start1, end2, i, i1, i2);
         assert(i < tot_size);
         if (v1 < v2) {
             tmp[i] = sorted_indices[i1];
@@ -215,7 +191,7 @@ void merge_indices(int rank, int *sorted_indices, int start1, int end1,
         i++;
     }
     assert(i == tot_size);
-    assert(start1 + i <= hashmap_length(*support_map));
+    assert(start1 + i <= num_items);
     // printf("%d-%d D.\n", start1, end2);
     // copy into original array
     for (j = 0; j < tot_size; j++) {
@@ -229,7 +205,7 @@ void merge_indices(int rank, int *sorted_indices, int start1, int end1,
 
 void recv_indices(int rank, int world_size, int source, int *sorted_indices,
                   int start, int *end, int length, int size,
-                  SupportMap *support_map, uint8_t **keys) {
+                  hashmap_element *items_count, int num_items) {
 
     MPI_Status status;
 
@@ -243,7 +219,7 @@ void recv_indices(int rank, int world_size, int source, int *sorted_indices,
     if (rank == 0)
         printf("%d Received %d buffer\n", rank, size);
     merge_indices(rank, sorted_indices, start, *end, position,
-                  position + size - 1, support_map, keys);
+                  position + size - 1, items_count, num_items);
     if (rank == 0)
         printf("%d Merged %d buffer\n", rank, size);
     *end = position + size - 1;
@@ -270,8 +246,8 @@ void send_indices(int rank, int world_size, int dest, int *sorted_indices,
 }
 
 void get_sorted_indices(int rank, int world_size, int *sorted_indices,
-                        int start, int end, int length, SupportMap *support_map,
-                        uint8_t **keys) {
+                        int start, int end, int length,
+                        hashmap_element *items_count, int num_items) {
     // printf("%d get sorted indices[%d, %d]\n", rank, start, end);
     int pow;
     bool sent = false;
@@ -283,14 +259,14 @@ void get_sorted_indices(int rank, int world_size, int *sorted_indices,
                 printf("%d receiving [%d-%d] from %d\n", rank, source * length,
                        source * length + length * (pow / 2) - 1, source);
                 recv_indices(rank, world_size, source, sorted_indices, start,
-                             &end, length, length * (pow / 2), support_map,
-                             keys);
+                             &end, length, length * (pow / 2), items_count,
+                             num_items);
                 printf("%d succesfully received from %d\n", rank, source);
             }
         } else {
             int dest = rank - pow / 2;
             printf("%d sending [%d-%d] to %d\n", rank, start, end, dest);
-            assert(end - start + 1 <= hashmap_length(*support_map));
+            assert(end - start + 1 <= num_items);
             send_indices(rank, world_size, dest, sorted_indices, start, end,
                          length);
             printf("%d succesfully sent to %d\n", rank, dest);

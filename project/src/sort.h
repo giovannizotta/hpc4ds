@@ -4,14 +4,11 @@
 #include "hashmap/hashmap.h"
 #include "types.h"
 
-void sort(uint8_t **keys, int *sorted_indices, SupportMap support_map, int start, int end, int num_threads);
+void sort(hashmap_element *items_count, int num_items, int *sorted_indices, int start, int end, int num_threads);
 
-int pivot(uint8_t **keys, int *sorted_indices, int start, int end, int m,
-          SupportMap support_map);
+int pivot(hashmap_element *items_count, int num_items, int *sorted_indices, int start, int end, int m);
 
-int select_m(uint8_t **keys, int *sorted_indices, int start, int end, int k,
-             SupportMap support_map);
+int select_m(hashmap_element *items_count, int num_items, int *sorted_indices, int start, int end, int k);
 
-void insertion_sort(uint8_t **keys, int *sorted_indices, int start, int end,
-                    SupportMap support_map);
+void insertion_sort(hashmap_element *items_count, int num_items, int *sorted_indices, int start, int end);
 #endif

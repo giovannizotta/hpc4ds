@@ -15,6 +15,7 @@
 #define __HASHMAP_H__
 
 #include "../cvector/cvector.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -35,7 +36,7 @@ typedef struct _hashmap_element {
     hashmap_key key;
     int key_length;
 
-    int in_use;
+    bool in_use;
     int value;
 } hashmap_element;
 
@@ -110,7 +111,7 @@ int hashmap_print(map_t in);
 int hashmap_get_elements(map_t in,
                          cvector_vector_type(hashmap_element) * elements);
 
-int hashmap_get_keys(map_t in, uint8_t ***keys);
+int hashmap_get_keys(map_t in, cvector_vector_type(uint8_t *) * keys);
 
 int hashmap_increment(map_t in, const void *key, size_t key_length, int inc);
 
