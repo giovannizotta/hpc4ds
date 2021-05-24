@@ -1,5 +1,6 @@
 FILENAME?="data/small_dataset.txt"
-NTHREAD?=4
+NPROC?=4
+NTHREAD?=1
 
 main: help
 
@@ -7,12 +8,12 @@ build:
 	@mpicc -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
 
 run_local:
-	@mpiexec -n $(NTHREAD) \
-	bin/main.out $(FILENAME)
+	@mpiexec -n $(NPROC) \
+	bin/main.out $(FILENAME) $(NTHREAD)
 
 time_run_local:
-	@/usr/bin/time -v mpiexec -n $(NTHREAD) \
-	bin/main.out $(FILENAME)
+	@/usr/bin/time -v mpiexec -n $(NPROC) \
+	bin/main.out $(FILENAME) $(NTHREAD)
 
 all: clean build run_local 
 

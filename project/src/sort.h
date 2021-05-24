@@ -4,7 +4,7 @@
 #include "hashmap/hashmap.h"
 #include "types.h"
 
-void sort(uint8_t **keys, int *sorted_indices, SupportMap support_map, int start, int end);
+void sort(uint8_t **keys, int *sorted_indices, SupportMap support_map, int start, int end, int num_threads);
 
 int pivot(uint8_t **keys, int *sorted_indices, int start, int end, int m,
           SupportMap support_map);

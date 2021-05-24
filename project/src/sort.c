@@ -9,35 +9,19 @@
 
 void insertion_sort(uint8_t **keys, int *sorted_indices, int start, int end,
                     SupportMap support_map) {
-    // printf("Insertion sort %d-%d!!!\n", start, end);
-    // printf("-------------\n");
-    // hashmap_print(support_map);
-    // printf("-------------\n");
-    // int k;
-    // for (k = start; k <= end; k++) {
-    //     printf("%d(%s) ", sorted_indices[k], keys[sorted_indices[k]]);
-    // }
-    // printf("\n");
     int i, j, i_key_length, j_key_length, i_val, j_val;
     for (i = start + 1; i <= end; i++) {
-        // uint8_t key[KEY_STATIC_LENGTH];
         i_key_length = ulength(keys[sorted_indices[i]]);
-        // memcpy(key, keys[i], i_key_length); // tmp = v[i]
         bool stop = false;
         assert(hashmap_get(support_map, keys[sorted_indices[i]], i_key_length,
-                           &i_val) != MAP_MISSING);
+                           &i_val) == MAP_OK);
         int tmp = sorted_indices[i];
         for (j = i; j > 0 && !stop; j--) {
             j_key_length = ulength(keys[sorted_indices[j - 1]]);
-            // assert(hashmap_get(support_map, keys[j-1], j_key_length, &j_val)
-            // !=
-            //        MAP_MISSING);
             assert(hashmap_get(support_map, keys[sorted_indices[j - 1]],
-                               j_key_length, &j_val) != MAP_MISSING);
-            // printf("###### %d %d\n", i_val, j_val);
+                               j_key_length, &j_val) == MAP_OK);
             if (j_val > i_val) {
                 sorted_indices[j] = sorted_indices[j - 1];
-                // memcpy(keys[j], keys[j - 1], j_key_length);
             } else {
                 stop = true;
             }
@@ -70,7 +54,7 @@ int pivot(uint8_t **keys, int *sorted_indices, int start, int end, int m,
     for (i = j + 1; i <= end; i++) {
         i_key_length = ulength(keys[sorted_indices[i]]);
         assert(hashmap_get(support_map, keys[sorted_indices[i]], i_key_length,
-                           &i_value) != MAP_MISSING);
+                           &i_value) == MAP_OK);
         if (i_value < pivot_value) {
             j++;
             swap(sorted_indices, i, j);
@@ -103,7 +87,7 @@ int choose_pivot(uint8_t **keys, int *ind, int start, int end,
     assert(hashmap_get(support_map, keys[ind[start]], l[0], &v[0]) !=
            MAP_MISSING);
 
-    assert(hashmap_get(support_map, keys[ind[m]], l[1], &v[1]) != MAP_MISSING);
+    assert(hashmap_get(support_map, keys[ind[m]], l[1], &v[1]) == MAP_OK);
     assert(hashmap_get(support_map, keys[ind[end]], l[2], &v[2]) !=
            MAP_MISSING);
 
@@ -126,7 +110,6 @@ void parallel_quick_sort(uint8_t **keys, int *sorted_indices, int start,
                          int end, cvector_vector_type(int) * stack,
                          int *num_busy_threads, int *num_threads,
                          SupportMap support_map) {
-    // printf("Quicksort %d-%d\n", start, end);
     bool idle = true;
     while (true) {
         if (end - start < INSERTION_SORT_THRESH) {
@@ -154,21 +137,12 @@ void parallel_quick_sort(uint8_t **keys, int *sorted_indices, int start,
                 return;
             }
         }
-        // printf("--- Quicksort %d-%d\n", start, end);
-        /* Skipped: choose pivot and do partitioning step */
-        // int m = select_m(keys, sorted_indices, start, end, (end - start) / 2,
-        //                  support_map);
-        // printf("Choosing pivot\n");
         int m = choose_pivot(keys, sorted_indices, start, end, support_map);
-        // printf("Pivot chosed\n");
-        // int m = start;
         int i = pivot(keys, sorted_indices, start, end, m, support_map);
-        // printf("Pivot done\n");
 #pragma omp critical
         {
             cvector_push_back((*stack), i - 1);
             cvector_push_back((*stack), start);
-            // printf("Job pushed\n");
             // push(pair(q, i - 1));
         } /* iteratively sort elements right of pivot */
         start = i + 1;
@@ -180,10 +154,9 @@ void parallel_quick_sort(uint8_t **keys, int *sorted_indices, int start,
  * (https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.100.809&rep=rep1&type=pdf#page=31)
  */
 void sort(uint8_t **keys, int *sorted_indices, SupportMap support_map,
-          int start, int end) {
+          int start, int end, int num_threads) {
 
     cvector_vector_type(int) stack = NULL;
-    int num_threads = 8;
     int num_busy_threads = 0;
 #pragma omp parallel shared(keys, sorted_indices, stack, num_threads,          \
                             num_busy_threads, support_map)
