@@ -72,9 +72,11 @@ int main(int argc, char **argv) {
     }
     printf("%d built index map\n", rank);
 
-    Tree tree = build_MPI_tree(rank, world_size, transactions, index_map,
-                               items_count, num_items, sorted_indices);
+    Tree tree =
+        build_MPI_tree(rank, world_size, transactions, index_map, items_count,
+                       num_items, sorted_indices, num_threads);
     printf("%d built tree\n", rank);
+
     if (tree != NULL)
         free_tree(&tree);
     /*--- FREE MEMORY ---*/

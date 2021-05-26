@@ -14,7 +14,7 @@ typedef cvector_vector_type(TreeNode *) Tree;
 
 Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
                     map_t index_map, hashmap_element *items_count,
-                    int num_items, int *sorted_indices);
+                    int num_items, int *sorted_indices, int num_threads);
 
 TreeNode *init_tree_node(int key, int value, int parent);
 void free_tree_node(TreeNode *node);
