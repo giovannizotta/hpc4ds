@@ -5,7 +5,7 @@ NTHREAD?=1
 main: help
 
 build:
-	@mpicc -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
+	@mpicc -std=gnu99 -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
 
 run_local:
 	@mpiexec -n $(NPROC) \

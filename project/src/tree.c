@@ -219,13 +219,13 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
 #pragma omp parallel for default(none)                                         \
     shared(start, pow, n_transactions, trees, rank, world_size, transactions,  \
            index_map, items_count, num_items, sorted_indices) private(i)       \
-        num_threads(1)
+        num_threads(8)
         for (i = start; i < n_transactions; i += pow) {
             if (pow > 1) {
                 // dest - source
 
-                printf("Thread %d Merging trees %d and %d\n",
-                       omp_get_thread_num(), i - pow / 2, i);
+                printf("Process %d Thread %d Merging trees %d and %d\n",
+                       rank, omp_get_thread_num(), i - pow / 2, i);
                 merge_trees(&trees[i - pow / 2], trees[i]);
                 // printf("Before freeing\n");
                 free_tree(&(trees[i]));
@@ -234,7 +234,7 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
                 //        omp_get_thread_num(), i - pow / 2, i);
             } else {
                 if (i % 100000 == 0)
-                    printf("Thread %d Building tree %d\n", omp_get_thread_num(),
+                    printf("Process %d Thread %d Building tree %d\n", rank, omp_get_thread_num(),
                            i);
                 trees[i] = build_OMP_tree(rank, world_size, &(transactions[i]),
                                           index_map, items_count, num_items,
