@@ -1,15 +1,26 @@
 #include "tree.h"
+#include "io.h"
 #include "sort.h"
 #include <omp.h>
 #include <stdio.h>
 #include <string.h>
 
+void print_tree(Tree tree) {
+    int n_nodes = cvector_size(tree);
+
+    for (int i = 0; i < n_nodes; i++) {
+        printf("Node (%d: %d)\n", tree[i]->key, tree[i]->value);
+        hashmap_print(tree[i]->adj);
+    }
+}
 TreeNode *init_tree_node(int key, int value, int parent) {
     TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
+    assert(node != NULL);
     node->key = key;
     node->value = value;
     node->parent = parent;
     node->adj = hashmap_new();
+    assert(node->adj != NULL);
     return node;
 }
 
@@ -27,13 +38,15 @@ Tree init_tree() {
     return tree;
 }
 
-void free_tree(Tree tree) {
-    int n_nodes = cvector_size(tree);
-    int i;
-    for (i = 0; i < n_nodes; i++) {
-        free_tree_node(tree[i]);
+void free_tree(Tree *tree) {
+    if (*tree != NULL) {
+        int n_nodes = cvector_size((*tree));
+        int i;
+        for (i = 0; i < n_nodes; i++) {
+            free_tree_node((*tree)[i]);
+        }
+        cvector_free((*tree));
     }
-    cvector_free(tree);
 }
 
 /**
@@ -41,6 +54,7 @@ void free_tree(Tree tree) {
  */
 int add_tree_node(Tree *tree, TreeNode *node) {
     cvector_push_back((*tree), node);
+    assert(*tree != NULL);
     int new_id = cvector_size((*tree)) - 1;
     TreeNode *parent = (*tree)[node->parent];
     hashmap_put(parent->adj, &(node->key), sizeof(int), new_id);
@@ -50,60 +64,65 @@ int add_tree_node(Tree *tree, TreeNode *node) {
 
 void add_subtree(Tree *dest, Tree source, int nd, int ns) {
     // add myself
-    printf("Add node nd: %d, ns: %d\n", nd, ns);
+    // printf("Add node nd: %d, ns: %d\n", nd, ns);
     cvector_vector_type(hashmap_element) neighbours = NULL;
     hashmap_get_elements(source[ns]->adj, &neighbours);
-    printf("get elements %lu\n", cvector_size(neighbours));
+    // printf("get elements %lu\n", cvector_size(neighbours));
     hashmap_free(source[ns]->adj);
+    source[ns]->adj = hashmap_new();
 
     source[ns]->parent = nd;
     int new_pos = add_tree_node(dest, source[ns]);
-    int num_adj_s = hashmap_length(source[ns]->adj);
+    int num_adj_s = cvector_size(neighbours);
     int i;
 
-    printf("map free\n");
+    // printf("map free\n");
     // add children recursively
     for (i = 0; i < num_adj_s; i++) {
-        printf("Adding child %d\n", i);
+        // printf("Adding child %d\n", i);
         assert(neighbours[i].value != ns);
         add_subtree(dest, source, new_pos, neighbours[i].value);
     }
-    printf("Node ok\n");
+    // printf("Node ok\n");
     source[ns] = NULL;
     cvector_free(neighbours);
 }
 
 void merge_trees_dfs(Tree *dest, Tree source, int nd, int ns) {
-    printf("Merging trees nd: %d, ns: %d ld: %lu, ls: %lu \n", nd, ns,
-           cvector_size((*dest)), cvector_size(source));
-    printf("Source has key %d\n", source[ns]->key);
+    // printf("Merging trees nd: %d, ns: %d ld: %lu, ls: %lu \n", nd, ns,
+    //    cvector_size((*dest)), cvector_size(source));
+    // printf("Source has key %d\n", source[ns]->key);
     int i;
-    assert(source[ns]->adj != NULL);
-    int num_adj_s = hashmap_length(source[ns]->adj);
+    // assert(source[ns]->adj != NULL);
     // int num_adj_d = hashmap_length((*dest)[nd]->adj);
     cvector_vector_type(hashmap_element) neighbours = NULL;
     hashmap_get_elements(source[ns]->adj, &neighbours);
+    int num_adj_s = cvector_size(neighbours);
+
     for (i = 0; i < num_adj_s; i++) {
-        printf("%dth neighbour\n", i);
+        // printf("%dth neighbour\n", i);
         // int source_item = (int *)(neighbours[i].key);
         int source_pos = neighbours[i].value;
         assert(ns != neighbours[i].value);
         int dest_pos;
         if (hashmap_get((*dest)[nd]->adj, neighbours[i].key, sizeof(int),
                         &dest_pos) == MAP_OK) {
-            printf("Present\n");
-            int new_value = (*dest)[dest_pos]->value + source[ns]->value;
-            assert(hashmap_put((*dest)[nd]->adj, neighbours[i].key, sizeof(int),
-                               new_value) == MAP_OK);
-            printf("Increase value\n");
+            // printf("Present\n");
+            // int new_value = (*dest)[dest_pos]->value +
+            // source[ns]->value; assert(hashmap_put((*dest)[nd]->adj,
+            // neighbours[i].key, sizeof(int),
+            //                    new_value) == MAP_OK);
+            (*dest)[dest_pos]->value += source[source_pos]->value;
+            // printf("Increase value (new value: %d)\n",
+            //        (*dest)[dest_pos]->value);
 
             merge_trees_dfs(dest, source, dest_pos, source_pos);
-            printf("recusive call ended\n");
+            // printf("recusive call ended\n");
 
         } else {
-            printf("Not there, adding subtree\n");
+            // printf("Not there, adding subtree\n");
             add_subtree(dest, source, nd, source_pos);
-            printf("Subtree added\n");
+            // printf("Subtree added\n");
         }
     }
     cvector_free(neighbours);
@@ -113,51 +132,62 @@ void merge_trees(Tree *dest, Tree source) {
     merge_trees_dfs(dest, source, 0, 0);
 }
 
-Tree build_OMP_tree(int rank, int world_size, Transaction transaction,
+Tree build_OMP_tree(int rank, int world_size, Transaction *transaction,
                     map_t index_map, hashmap_element *items_count,
                     int num_items, int *sorted_indices) {
     // printf("%d C.\n", rank);
 
-    int n_items = cvector_size(transaction);
+    int n_items = cvector_size((*transaction));
     hashmap_element *elements =
         (hashmap_element *)malloc(n_items * sizeof(hashmap_element));
+    assert(elements != NULL);
     for (int i = 0; i < n_items; i++) {
-        int item_size = cvector_size(transaction[i]);
-        assert(hashmap_get(index_map, transaction[i], item_size,
+        int item_size = cvector_size((*transaction)[i]);
+        assert(hashmap_get(index_map, (*transaction)[i], item_size,
                            &(elements[i].value)) == MAP_OK);
         elements[i].key_length = item_size;
-        memcpy(elements[i].key, transaction[i], item_size);
+        memcpy(elements[i].key, (*transaction)[i], item_size);
     }
     // printf("%d D.\n", rank);
 
     int *transaction_sorted_indices = (int *)malloc(n_items * sizeof(int));
     sort(elements, n_items, transaction_sorted_indices, 0, n_items - 1, 1);
-    // printf("%d E.\n", rank);
-    Tree tree = init_tree();
+    free(elements);
 
+    Tree tree = init_tree();
+    // printf("%d E.\n", rank);
     for (int i = 0; i < n_items; i++) {
-        uint8_t *item = transaction[transaction_sorted_indices[i]];
+        assert(transaction_sorted_indices[i] >= 0);
+        assert(transaction_sorted_indices[i] < n_items);
+        Item item = (*transaction)[transaction_sorted_indices[i]];
         // printf("%d Ea.\n", rank);
-        int item_size =
-            cvector_size(transaction[transaction_sorted_indices[i]]);
+        int item_size = cvector_size(item);
         // printf("%d Eb.\n", rank);
         int pos;
         assert(hashmap_get(index_map, item, item_size, &pos) == MAP_OK);
         // printf("%d Ec pos: %d (out of %d)\n", rank, pos, num_items);
+        assert(pos >= 0);
+        assert(pos < num_items);
+        assert(sorted_indices[pos] >= 0);
+        assert(sorted_indices[pos] < num_items);
         int value = items_count[sorted_indices[pos]].value;
 
         TreeNode *node = init_tree_node(sorted_indices[pos], 1, i);
-
+        assert(node != NULL);
         assert(add_tree_node(&tree, node) == i + 1);
 
         // printf("%d Ed value %d.\n", rank, value);
         // printf("(%s : %d [%d]) ", item, pos, value);
     }
+    free_transaction(transaction);
+
+    free(transaction_sorted_indices);
+    // free_tree(&tree);
 
     // build tree
 
-    free(transaction_sorted_indices);
-    free(elements);
+    // free(transaction_sorted_indices);
+    // free(elements);
     // printf("%d F.\n", rank);
     return tree;
 }
@@ -182,31 +212,37 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
     int n_transactions = cvector_size(transactions);
     Tree *trees = (Tree *)malloc(n_transactions * sizeof(Tree));
     int i, pow;
-    printf("%d B.\n", rank);
+    printf("%d B trans %d.\n", rank, n_transactions);
 
-    for (pow = 1; pow <= 2; pow *= 2) {
+    for (pow = 1; pow < 2 * n_transactions; pow *= 2) {
         int start = pow == 1 ? 0 : pow / 2;
 #pragma omp parallel for default(none)                                         \
     shared(start, pow, n_transactions, trees, rank, world_size, transactions,  \
            index_map, items_count, num_items, sorted_indices) private(i)       \
-        num_threads(4)
+        num_threads(1)
         for (i = start; i < n_transactions; i += pow) {
             if (pow > 1) {
                 // dest - source
+
                 printf("Thread %d Merging trees %d and %d\n",
                        omp_get_thread_num(), i - pow / 2, i);
                 merge_trees(&trees[i - pow / 2], trees[i]);
-                printf("Before freeing\n");
-                free_tree(trees[i]);
-                printf("DONE MERGING Thread %d Merging trees %d and %d\n",
-                       omp_get_thread_num(), i - pow / 2, i);
+                // printf("Before freeing\n");
+                free_tree(&(trees[i]));
+                trees[i] = NULL;
+                // printf("DONE MERGING Thread %d Merging trees %d and %d\n",
+                //        omp_get_thread_num(), i - pow / 2, i);
             } else {
-                printf("Thread %d Building tree %d\n", omp_get_thread_num(), i);
-                trees[i] =
-                    build_OMP_tree(rank, world_size, transactions[i], index_map,
-                                   items_count, num_items, sorted_indices);
-                printf("DONE BUILDING Thread %d Building tree %d size: %lu\n",
-                       omp_get_thread_num(), i, cvector_size(trees[i]));
+                if (i % 100000 == 0)
+                    printf("Thread %d Building tree %d\n", omp_get_thread_num(),
+                           i);
+                trees[i] = build_OMP_tree(rank, world_size, &(transactions[i]),
+                                          index_map, items_count, num_items,
+                                          sorted_indices);
+                // printf("DONE BUILDING Thread %d Building tree %d size:
+                // %lu\n",
+                //        omp_get_thread_num(), i, cvector_size(trees[i]));
+                // print_tree(trees[i]);
                 for (int j = 1; j < cvector_size(trees[i]); j++) {
                     assert(trees[i][j]->parent != j);
                     int x;
@@ -215,8 +251,12 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
                 }
             }
         }
+        // free_transactions(&transactions);
     }
-
+    // print_tree(trees[0]);
+    // free_tree(trees[0]);
+    for (int i = 0; i < n_transactions; i++)
+        free_tree(&(trees[i]));
     free(trees);
     return NULL;
 }

@@ -62,6 +62,7 @@
         "utils.h": "c",
         "stdio.h": "c",
         "stdbool.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "sort.h": "c"
     }
 }

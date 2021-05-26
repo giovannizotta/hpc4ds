@@ -6,6 +6,7 @@
 
 void update_supports(Item item, SupportMap *support_map);
 void free_transactions(TransactionsList *transactions);
+void free_transaction(Transaction *transaction);
 void write_transactions(int rank, TransactionsList transactions);
 int parse_item(int rank, int i, char *chunk, int chunksize,
                Transaction *transaction, SupportMap *support_map);

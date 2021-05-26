@@ -32,12 +32,15 @@ int main(int argc, char **argv) {
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
+    printf("%d read transactions\n", rank);
     // write_transactions(rank, transactions);
     MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
     hashmap_element *items_count = NULL;
     int num_items;
     get_global_map(rank, world_size, &support_map, &items_count, &num_items,
                    DT_HASHMAP_ELEMENT);
+    printf("%d got global map\n", rank);
+
     hashmap_free(support_map);
 
     /*--- SORT ITEMS BY SUPPORT ---*/
@@ -46,18 +49,20 @@ int main(int argc, char **argv) {
     int start = length * rank;
     int end = min(length * (rank + 1), num_items) - 1;
     sort(items_count, num_items, sorted_indices, start, end, num_threads);
+    printf("%d sorted items\n", rank);
     get_sorted_indices(rank, world_size, sorted_indices, start, end, length,
                        items_count, num_items);
+    printf("%d got sorted items\n", rank);
 
     /*--- PRINT ITEMS SORTED ---*/
-    if (rank == 0) {
-        for (int i = 0; i < num_items; i++) {
-            int value = items_count[sorted_indices[i]].value;
-            uint8_t *key = items_count[sorted_indices[i]].key;
-            printf("%s: %d\n", key, value);
-            // items_count[i] = items_count[sorted_indices[i]];
-        }
-    }
+    // if (rank == 0) {
+    //     for (int i = 0; i < num_items; i++) {
+    //         int value = items_count[sorted_indices[i]].value;
+    //         uint8_t *key = items_count[sorted_indices[i]].key;
+    //         printf("%s: %d\n", key, value);
+    //         // items_count[i] = items_count[sorted_indices[i]];
+    //     }
+    // }
 
     map_t index_map = hashmap_new();
     for (int i = 0; i < num_items; i++) {
@@ -65,13 +70,15 @@ int main(int argc, char **argv) {
         int key_length = items_count[sorted_indices[i]].key_length;
         hashmap_put(index_map, key, key_length, sorted_indices[i]);
     }
+    printf("%d built index map\n", rank);
 
-    printf("%d A.\n", rank);
     Tree tree = build_MPI_tree(rank, world_size, transactions, index_map,
                                items_count, num_items, sorted_indices);
-
-    free_tree(tree);
+    printf("%d built tree\n", rank);
+    if (tree != NULL)
+        free_tree(&tree);
     /*--- FREE MEMORY ---*/
+    hashmap_free(index_map);
     free(sorted_indices);
     if (rank != 0)
         free(items_count);

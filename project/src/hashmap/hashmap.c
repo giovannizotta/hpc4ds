@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INITIAL_SIZE 16
+#define INITIAL_SIZE 8
 #define LINEAR_PROBE_LENGTH 32
 
 static uint8_t *get_key(hashmap_element *el) {

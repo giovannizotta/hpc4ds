@@ -19,7 +19,7 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
 TreeNode *init_tree_node(int key, int value, int parent);
 void free_tree_node(TreeNode *node);
 Tree init_tree();
-void free_tree(Tree tree);
+void free_tree(Tree *tree);
 int add_tree_node(Tree *tree, TreeNode *node);
 void merge_trees(Tree *dest, Tree source);
 void merge_trees_dfs(Tree *dest, Tree source, int nd, int ns);

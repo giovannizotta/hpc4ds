@@ -50,18 +50,34 @@
 //     // } hashmap_map;
 // }
 
-void free_transactions(TransactionsList *transactions) {
-    size_t n_transactions = cvector_size((*transactions));
-    size_t i, j;
-    for (i = 0; i < n_transactions; i++) {
-        size_t n_items = cvector_size((*transactions)[i]);
-        for (j = 0; j < n_items; j++) {
-            cvector_free((*transactions)[i][j]);
+void free_transaction(Transaction *transaction) {
+    if (*transaction != NULL) {
+        size_t n_items = cvector_size((*transaction));
+        int i;
+        for (i = 0; i < n_items; i++) {
+            cvector_free((*transaction)[i]);
         }
-        cvector_free((*transactions)[i]);
+        cvector_free((*transaction));
+        *transaction = NULL;
     }
-    cvector_free((*transactions));
-    *transactions = NULL;
+}
+
+void free_transactions(TransactionsList *transactions) {
+    if (*transactions != NULL) {
+        size_t n_transactions = cvector_size((*transactions));
+        size_t i, j;
+        for (i = 0; i < n_transactions; i++) {
+            if ((*transactions)[i] != NULL) {
+                size_t n_items = cvector_size((*transactions)[i]);
+                for (j = 0; j < n_items; j++) {
+                    cvector_free((*transactions)[i][j]);
+                }
+                cvector_free((*transactions)[i]);
+            }
+        }
+        cvector_free((*transactions));
+        *transactions = NULL;
+    }
 }
 
 void write_keys(int rank, int start, int end, uint8_t **keys) {
