@@ -139,30 +139,35 @@ Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
     // printf("%d C.\n", rank);
 
     int n_items = cvector_size((*transaction));
-    hashmap_element *elements =
-        (hashmap_element *)malloc(n_items * sizeof(hashmap_element));
-    assert(elements != NULL);
+    cvector_vector_type(hashmap_element) elements = NULL;
+
     for (int i = 0; i < n_items; i++) {
         int item_size = cvector_size((*transaction)[i]);
-        assert(hashmap_get(index_map, (*transaction)[i], item_size,
-                           &(elements[i].value)) == MAP_OK);
-        elements[i].key_length = item_size;
-        memcpy(elements[i].key, (*transaction)[i], item_size);
+        hashmap_element element;
+        // consider only items with support >= min_support (in index map)
+        if (hashmap_get(index_map, (*transaction)[i], item_size,
+                        &(element.value)) == MAP_OK) {
+            element.key_length = item_size;
+            memcpy(element.key, (*transaction)[i], item_size);
+            cvector_push_back(elements, element);
+        }
     }
+    free_transaction(transaction);
+
     // printf("%d D.\n", rank);
+    n_items = cvector_size(elements);
 
     int *transaction_sorted_indices = (int *)malloc(n_items * sizeof(int));
     sort(elements, n_items, transaction_sorted_indices, 0, n_items - 1, 1);
-    free(elements);
 
     Tree tree = init_tree();
     // printf("%d E.\n", rank);
     for (int i = 0; i < n_items; i++) {
         assert(transaction_sorted_indices[i] >= 0);
         assert(transaction_sorted_indices[i] < n_items);
-        Item item = (*transaction)[transaction_sorted_indices[i]];
+        Item item = elements[transaction_sorted_indices[i]].key;
         // printf("%d Ea.\n", rank);
-        int item_size = cvector_size(item);
+        int item_size = elements[transaction_sorted_indices[i]].key_length;
         // printf("%d Eb.\n", rank);
         int pos;
         assert(hashmap_get(index_map, item, item_size, &pos) == MAP_OK);
@@ -180,7 +185,7 @@ Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
         // printf("%d Ed value %d.\n", rank, value);
         // printf("(%s : %d [%d]) ", item, pos, value);
     }
-    free_transaction(transaction);
+    cvector_free(elements);
 
     free(transaction_sorted_indices);
     // free_tree(&tree);
