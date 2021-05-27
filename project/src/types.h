@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 typedef map_t SupportMap;
+typedef map_t IndexMap;
 
 typedef cvector_vector_type(uint8_t) Item;
 typedef cvector_vector_type(Item) Transaction;

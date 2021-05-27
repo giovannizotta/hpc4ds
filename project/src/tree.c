@@ -133,9 +133,9 @@ void merge_trees(Tree *dest, Tree source) {
     merge_trees_dfs(dest, source, 0, 0);
 }
 
-Tree build_OMP_tree(int rank, int world_size, Transaction *transaction,
-                    map_t index_map, hashmap_element *items_count,
-                    int num_items, int *sorted_indices) {
+Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
+                            IndexMap index_map, hashmap_element *items_count,
+                            int num_items, int *sorted_indices) {
     // printf("%d C.\n", rank);
 
     int n_items = cvector_size((*transaction));
@@ -171,7 +171,7 @@ Tree build_OMP_tree(int rank, int world_size, Transaction *transaction,
         assert(pos < num_items);
         assert(sorted_indices[pos] >= 0);
         assert(sorted_indices[pos] < num_items);
-        int value = items_count[sorted_indices[pos]].value;
+        // int value = items_count[sorted_indices[pos]].value;
 
         TreeNode *node = init_tree_node(sorted_indices[pos], 1, i);
         assert(node != NULL);
@@ -193,9 +193,9 @@ Tree build_OMP_tree(int rank, int world_size, Transaction *transaction,
     return tree;
 }
 
-Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
-                    map_t index_map, hashmap_element *items_count,
-                    int num_items, int *sorted_indices, int num_threads) {
+Tree build_tree(int rank, int world_size, TransactionsList transactions,
+                IndexMap index_map, hashmap_element *items_count, int num_items,
+                int *sorted_indices, int num_threads) {
     // Tree process_tree;
     // # omp parallel for
     // Tree trees[];
@@ -226,20 +226,21 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
             if (pow > 1) {
                 // dest - source
 
-                printf("Process %d Thread %d Merging trees %d and %d\n", rank,
-                       omp_get_thread_num(), i - pow / 2, i);
+                // printf("Process %d Thread %d Merging trees %d and %d\n",
+                // rank,
+                //        omp_get_thread_num(), i - pow / 2, i);
                 merge_trees(&trees[i - pow / 2], trees[i]);
                 // printf("Before freeing\n");
                 free_tree(&(trees[i]));
                 // printf("DONE MERGING Thread %d Merging trees %d and %d\n",
                 //        omp_get_thread_num(), i - pow / 2, i);
             } else {
-                if (i % 100000 == 0)
-                    printf("Process %d Thread %d Building tree %d\n", rank,
-                           omp_get_thread_num(), i);
-                trees[i] = build_OMP_tree(rank, world_size, &(transactions[i]),
-                                          index_map, items_count, num_items,
-                                          sorted_indices);
+                // if (i % 100000 == 0)
+                //     printf("Process %d Thread %d Building tree %d\n", rank,
+                //            omp_get_thread_num(), i);
+                trees[i] = build_transaction_tree(
+                    rank, world_size, &(transactions[i]), index_map,
+                    items_count, num_items, sorted_indices);
                 // printf("DONE BUILDING Thread %d Building tree %d size:
                 // %lu\n",
                 //        omp_get_thread_num(), i, cvector_size(trees[i]));
@@ -261,4 +262,15 @@ Tree build_MPI_tree(int rank, int world_size, TransactionsList transactions,
     Tree res = trees[0];
     free(trees);
     return res;
+}
+
+void tree_get_nodes(Tree tree, cvector_vector_type(TreeNodeToSend) * nodes) {
+    int num_nodes = cvector_size(tree);
+    for (int i = 0; i < num_nodes; i++) {
+        TreeNodeToSend node;
+        node.key = tree[i]->key;
+        node.value = tree[i]->value;
+        node.parent = tree[i]->parent;
+        cvector_push_back((*nodes), node);
+    }
 }

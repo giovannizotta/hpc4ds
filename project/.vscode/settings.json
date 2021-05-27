@@ -63,6 +63,7 @@
         "stdio.h": "c",
         "stdbool.h": "c",
         "string.h": "c",
-        "sort.h": "c"
+        "sort.h": "c",
+        "tree.h": "c"
     }
 }
