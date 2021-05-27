@@ -108,11 +108,11 @@ void send_map(int rank, int world_size, int dest, SupportMap *support_map,
 
 void broadcast_map(int rank, int world_size, SupportMap *support_map,
                    hashmap_element **items_count, int *num_items,
-                   MPI_Datatype DT_HASHMAP_ELEMENT) {
+                   MPI_Datatype DT_HASHMAP_ELEMENT, int min_support) {
     if (rank == 0) {
-        int size = hashmap_length(*support_map);
         cvector_vector_type(hashmap_element) elements = NULL;
-        hashmap_get_elements(*support_map, &elements);
+        hashmap_get_elements_with_support(*support_map, &elements, min_support);
+        int size = cvector_size(elements);
         MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
         MPI_Bcast(elements, size, DT_HASHMAP_ELEMENT, 0, MPI_COMM_WORLD);
         *items_count = elements;
@@ -133,7 +133,8 @@ void broadcast_map(int rank, int world_size, SupportMap *support_map,
 }
 
 void get_global_map(int rank, int world_size, SupportMap *support_map,
-                    hashmap_element **items_count, int *num_items) {
+                    hashmap_element **items_count, int *num_items,
+                    int min_support) {
 
     MPI_Datatype DT_HASHMAP_ELEMENT = define_datatype_hashmap_element();
     int pow;
@@ -143,16 +144,16 @@ void get_global_map(int rank, int world_size, SupportMap *support_map,
             // receive and merge
             int source = rank + pow / 2;
             if (source < world_size) {
-                printf("%d receiving from %d\n", rank, source);
+                // printf("%d receiving from %d\n", rank, source);
                 recv_map(rank, world_size, source, support_map,
                          DT_HASHMAP_ELEMENT);
-                printf("%d succesfully received from %d\n", rank, source);
+                // printf("%d succesfully received from %d\n", rank, source);
             }
         } else {
             int dest = rank - pow / 2;
-            printf("%d sending to %d\n", rank, dest);
+            // printf("%d sending to %d\n", rank, dest);
             send_map(rank, world_size, dest, support_map, DT_HASHMAP_ELEMENT);
-            printf("%d succesfully sent to %d\n", rank, dest);
+            // printf("%d succesfully sent to %d\n", rank, dest);
             sent = true;
         }
     }
@@ -161,7 +162,7 @@ void get_global_map(int rank, int world_size, SupportMap *support_map,
      * **/
 
     broadcast_map(rank, world_size, support_map, items_count, num_items,
-                  DT_HASHMAP_ELEMENT);
+                  DT_HASHMAP_ELEMENT, min_support);
 
     return;
 }
@@ -173,9 +174,7 @@ void merge_indices(int rank, int *sorted_indices, int start1, int end1,
     int tot_size = end1 - start1 + 1 + end2 - start2 + 1;
     assert(start1 + tot_size <= num_items);
     assert(end1 <= num_items);
-    if (end2 > num_items) {
-        printf("%d end2: %d, hashmaplenght: %d\n", rank, end2, num_items);
-    }
+
     assert(end2 <= num_items);
     // printf("MERGING %d-%d and %d-%d (totsize:%d)\n", start1, end1, start2,
     // end2,
@@ -233,17 +232,12 @@ void recv_indices(int rank, int world_size, int source, int *sorted_indices,
 
     int position = source * length;
     // printf("RECEIVE: receiving\n");
-    if (rank == 0)
-        printf("%d Receiving %d buffer\n", rank, length);
+
     MPI_Recv(sorted_indices + position, size, MPI_INT, source, 0,
              MPI_COMM_WORLD, &status);
     MPI_Get_count(&status, MPI_INT, &size);
-    if (rank == 0)
-        printf("%d Received %d buffer\n", rank, size);
     merge_indices(rank, sorted_indices, start, *end, position,
                   position + size - 1, items_count, num_items);
-    if (rank == 0)
-        printf("%d Merged %d buffer\n", rank, size);
     *end = position + size - 1;
 }
 
@@ -283,20 +277,21 @@ void get_sorted_indices(int rank, int world_size, int *sorted_indices,
             // receive and merge
             int source = rank + pow / 2;
             if (source < world_size) {
-                printf("%d receiving [%d-%d] from %d\n", rank, source * length,
-                       source * length + length * (pow / 2) - 1, source);
+                // printf("%d receiving [%d-%d] from %d\n", rank, source *
+                // length,
+                //    source * length + length * (pow / 2) - 1, source);
                 recv_indices(rank, world_size, source, sorted_indices, start,
                              &end, length, length * (pow / 2), items_count,
                              num_items);
-                printf("%d succesfully received from %d\n", rank, source);
+                // printf("%d succesfully received from %d\n", rank, source);
             }
         } else {
             int dest = rank - pow / 2;
-            printf("%d sending [%d-%d] to %d\n", rank, start, end, dest);
+            // printf("%d sending [%d-%d] to %d\n", rank, start, end, dest);
             assert(end - start + 1 <= num_items);
             send_indices(rank, world_size, dest, sorted_indices, start, end,
                          length);
-            printf("%d succesfully sent to %d\n", rank, dest);
+            // printf("%d succesfully sent to %d\n", rank, dest);
             sent = true;
         }
     }
@@ -386,8 +381,7 @@ void broadcast_tree(int rank, int world_size, Tree *tree,
         Tree received_tree;
         parse_tree(nodes, size, &received_tree);
         *tree = received_tree;
-        printf("RECEIVE: TREE RECEIVED FROM BROADCAST (size: %lu)!!!\n",
-               cvector_size((*tree)));
+
         free(nodes);
     }
 }
@@ -403,15 +397,15 @@ void get_global_tree(int rank, int world_size, Tree *tree,
             // receive and merge
             int source = rank + pow / 2;
             if (source < world_size) {
-                printf("%d receiving from %d\n", rank, source);
+                // printf("%d receiving from %d\n", rank, source);
                 recv_tree(rank, world_size, source, tree, DT_TREE_NODE);
-                printf("%d succesfully received from %d\n", rank, source);
+                // printf("%d succesfully received from %d\n", rank, source);
             }
         } else {
             int dest = rank - pow / 2;
-            printf("%d sending to %d\n", rank, dest);
+            // printf("%d sending to %d\n", rank, dest);
             send_tree(rank, world_size, dest, tree, DT_TREE_NODE);
-            printf("%d succesfully sent to %d\n", rank, dest);
+            // printf("%d succesfully sent to %d\n", rank, dest);
             sent = true;
         }
     }

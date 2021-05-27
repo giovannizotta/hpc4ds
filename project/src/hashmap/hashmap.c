@@ -492,6 +492,29 @@ int hashmap_get_elements(map_t in,
 
     return MAP_OK;
 }
+
+int hashmap_get_elements_with_support(map_t in,
+                                      cvector_vector_type(hashmap_element) *
+                                          elements,
+                                      int min_support) {
+
+    int i;
+
+    /* Cast the hashmap */
+    hashmap_map *m = (hashmap_map *)in;
+
+    /* On empty hashmap, return immediately */
+    if (hashmap_length(m) <= 0)
+        return MAP_MISSING;
+
+    /* Linear probing */
+    for (i = 0; i < m->table_size; i++)
+        if (m->data[i].in_use && m->data[i].value >= min_support) {
+            cvector_push_back((*elements), m->data[i]);
+        }
+    return MAP_OK;
+}
+
 /**
  * Puts into vector keys *references* to hashmap keys
  */

@@ -213,7 +213,7 @@ Tree build_tree(int rank, int world_size, TransactionsList transactions,
     int n_transactions = cvector_size(transactions);
     Tree *trees = (Tree *)malloc(n_transactions * sizeof(Tree));
     int i, pow;
-    printf("%d B trans %d.\n", rank, n_transactions);
+    // printf("%d B trans %d.\n", rank, n_transactions);
 
 #pragma omp parallel default(none)                                             \
     shared(n_transactions, trees, rank, world_size, transactions, index_map,   \

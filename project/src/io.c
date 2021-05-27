@@ -264,6 +264,6 @@ void read_transactions(TransactionsList *transactions, char *filename, int rank,
     }
     // write_file(rank, transactions);
     free(chunk);
-    size_t n_transactions = cvector_size((*transactions));
-    printf("%d Read %lu transactions\n", rank, n_transactions);
+    // size_t n_transactions = cvector_size((*transactions));
+    // printf("%d Read %lu transactions\n", rank, n_transactions);
 }

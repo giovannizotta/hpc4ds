@@ -111,6 +111,9 @@ int hashmap_print(map_t in);
 int hashmap_get_elements(map_t in,
                          cvector_vector_type(hashmap_element) * elements);
 
+int hashmap_get_elements_with_support(
+    map_t in, cvector_vector_type(hashmap_element) * elements, int min_support);
+
 int hashmap_get_keys(map_t in, cvector_vector_type(uint8_t *) * keys);
 
 int hashmap_increment(map_t in, const void *key, size_t key_length, int inc);

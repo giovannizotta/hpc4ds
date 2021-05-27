@@ -10,6 +10,18 @@
 #include "tree.h"
 #include "utils.h"
 
+void print_log_header(bool debug) {
+    if (debug) {
+        printf("rank, time, msg\n");
+    }
+}
+
+void print_log(bool debug, int rank, double start, double end, char *msg) {
+    if (debug) {
+        printf("%d, %lf, %s\n", rank, end - start, msg);
+    }
+}
+
 int main(int argc, char **argv) {
     int rank, world_size;
 
@@ -24,33 +36,54 @@ int main(int argc, char **argv) {
         MPI_Finalize();
         exit(1);
     }
-    int num_threads = 0;
+
+    int num_threads = 1, min_support = 1;
+    bool debug = false;
     if (argc > 2)
         num_threads = atoi(argv[2]);
+    if (argc > 3)
+        min_support = atoi(argv[3]);
+    if (argc > 4)
+        debug = atoi(argv[4]);
 
+    if (rank == 0)
+        print_log_header(debug);
+
+    double start_time, end_time;
     /*--- READ TRANSACTION AND SUPPORT MAP ---*/
+    start_time = MPI_Wtime();
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
     read_transactions(&transactions, argv[1], rank, world_size, &support_map);
-    printf("%d read transactions\n", rank);
+    end_time = MPI_Wtime();
+    print_log(debug, rank, start_time, end_time, "read transactions");
+
     // write_transactions(rank, transactions);
+    start_time = MPI_Wtime();
     hashmap_element *items_count = NULL;
     int num_items;
-    get_global_map(rank, world_size, &support_map, &items_count, &num_items);
-    printf("%d got global map\n", rank);
-
+    get_global_map(rank, world_size, &support_map, &items_count, &num_items,
+                   min_support);
     hashmap_free(support_map);
+    end_time = MPI_Wtime();
+    print_log(debug, rank, start_time, end_time, "received global map");
 
     /*--- SORT ITEMS BY SUPPORT ---*/
+    start_time = MPI_Wtime();
     size_t length = 1 + (num_items - 1) / world_size;
     int *sorted_indices = (int *)malloc(num_items * sizeof(int));
     int start = length * rank;
     int end = min(length * (rank + 1), num_items) - 1;
     sort(items_count, num_items, sorted_indices, start, end, num_threads);
-    printf("%d sorted items\n", rank);
+    end_time = MPI_Wtime();
+    print_log(debug, rank, start_time, end_time, "sorted local items");
+    start_time = MPI_Wtime();
     get_sorted_indices(rank, world_size, sorted_indices, start, end, length,
                        items_count, num_items);
-    printf("%d got sorted items\n", rank);
+
+    end_time = MPI_Wtime();
+    print_log(debug, rank, start_time, end_time,
+              "received sorted global items");
 
     /*--- PRINT ITEMS SORTED ---*/
     // if (rank == 0) {
@@ -62,22 +95,29 @@ int main(int argc, char **argv) {
     //     }
     // }
 
-    IndexMap index_map = hashmap_new();
+    start_time = MPI_Wtime();
+    IndexMap index_map = hashmap_new(); // item -> pos in the sorted array
     for (int i = 0; i < num_items; i++) {
         uint8_t *key = items_count[sorted_indices[i]].key;
         int key_length = items_count[sorted_indices[i]].key_length;
         hashmap_put(index_map, key, key_length, sorted_indices[i]);
     }
-    printf("%d built index map\n", rank);
+
+    // printf("%d built index map\n", rank);
 
     Tree tree = build_tree(rank, world_size, transactions, index_map,
                            items_count, num_items, sorted_indices, num_threads);
-    printf("%d built tree\n", rank);
+    // printf("%d built tree\n", rank);
     hashmap_free(index_map);
     free_transactions(&transactions);
+    end_time = MPI_Wtime();
+    print_log(debug, rank, start_time, end_time, "built local tree");
+    start_time = MPI_Wtime();
 
     get_global_tree(rank, world_size, &tree, items_count, num_items,
                     sorted_indices);
+    end_time = MPI_Wtime();
+    print_log(debug, rank, start_time, end_time, "received global tree");
 
     /*--- FREE MEMORY ---*/
     if (tree != NULL)
