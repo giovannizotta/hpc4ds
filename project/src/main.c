@@ -105,8 +105,9 @@ int main(int argc, char **argv) {
 
     // printf("%d built index map\n", rank);
 
-    Tree tree = build_tree(rank, world_size, transactions, index_map,
-                           items_count, num_items, sorted_indices, num_threads);
+    Tree tree = tree_build_from_transactions(rank, world_size, transactions,
+                                             index_map, items_count, num_items,
+                                             sorted_indices, num_threads);
     // printf("%d built tree\n", rank);
     hashmap_free(index_map);
     free_transactions(&transactions);

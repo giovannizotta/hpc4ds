@@ -7,7 +7,7 @@ typedef struct TreeNode {
     int key;
     int value;
     int parent;
-    map_t adj; // key: key
+    map_t adj;
 } TreeNode;
 typedef struct TreeNodeToSend {
     int key;
@@ -17,23 +17,21 @@ typedef struct TreeNodeToSend {
 
 typedef cvector_vector_type(TreeNode *) Tree;
 
-Tree build_tree(int rank, int world_size, TransactionsList transactions,
-                IndexMap index_map, hashmap_element *items_count, int num_items,
-                int *sorted_indices, int num_threads);
+TreeNode *tree_node_new(int key, int value, int parent);
+void tree_node_free(TreeNode *node);
 
-TreeNode *init_tree_node(int key, int value, int parent);
-void free_tree_node(TreeNode *node);
-Tree init_tree();
+Tree tree_new();
 void free_tree(Tree *tree);
-int add_tree_node(Tree *tree, TreeNode *node);
-void merge_trees(Tree *dest, Tree source);
-void merge_trees_dfs(Tree *dest, Tree source, int nd, int ns);
+int tree_add_node(Tree *tree, TreeNode *node);
+void tree_merge(Tree *dest, Tree source);
+void tree_merge_dfs(Tree *dest, Tree source, int nd, int ns);
 void tree_get_nodes(Tree tree, cvector_vector_type(TreeNodeToSend) * nodes);
-// MPI_DATATYPE {
-//     int k;
-//     int v;
-//     int parent;
-// }
-// Node * nodes;
+void tree_print(Tree tree);
+
+Tree tree_build_from_transactions(int rank, int world_size,
+                                  TransactionsList transactions,
+                                  IndexMap index_map,
+                                  hashmap_element *items_count, int num_items,
+                                  int *sorted_indices, int num_threads);
 
 #endif

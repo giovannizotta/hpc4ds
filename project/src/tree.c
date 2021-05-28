@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <string.h>
 
-void print_tree(Tree tree) {
-    int n_nodes = cvector_size(tree);
-
-    for (int i = 0; i < n_nodes; i++) {
-        printf("Node (%d: %d)\n", tree[i]->key, tree[i]->value);
-        hashmap_print(tree[i]->adj);
-    }
-}
-TreeNode *init_tree_node(int key, int value, int parent) {
+/**
+ * Instantiate and return a new node of the tree.
+ *
+ * @param[in] key the key of the node
+ * @param[in] value the value of the node
+ * @param[in] parent the parent of the node in the tree
+ * @return a pointer to the node created
+ */
+TreeNode *tree_node_new(int key, int value, int parent) {
     TreeNode *node = (TreeNode *)malloc(sizeof(TreeNode));
     assert(node != NULL);
     node->key = key;
@@ -24,15 +24,24 @@ TreeNode *init_tree_node(int key, int value, int parent) {
     return node;
 }
 
-void free_tree_node(TreeNode *node) {
+void tree_print(Tree tree) {
+    int n_nodes = cvector_size(tree);
+
+    for (int i = 0; i < n_nodes; i++) {
+        printf("Node (%d: %d)\n", tree[i]->key, tree[i]->value);
+        hashmap_print(tree[i]->adj);
+    }
+}
+
+void tree_node_free(TreeNode *node) {
     if (node != NULL) {
         hashmap_free(node->adj);
         free(node);
     }
 }
 
-Tree init_tree() {
-    TreeNode *node = init_tree_node(TREE_NODE_NULL, -1, 0);
+Tree tree_new() {
+    TreeNode *node = tree_node_new(TREE_NODE_NULL, -1, 0);
     Tree tree = NULL;
     cvector_push_back(tree, node);
     return tree;
@@ -43,7 +52,7 @@ void free_tree(Tree *tree) {
         int n_nodes = cvector_size((*tree));
         int i;
         for (i = 0; i < n_nodes; i++) {
-            free_tree_node((*tree)[i]);
+            tree_node_free((*tree)[i]);
         }
         cvector_free((*tree));
         *tree = NULL;
@@ -53,7 +62,7 @@ void free_tree(Tree *tree) {
 /**
  * Return the index of the added node in the tree
  */
-int add_tree_node(Tree *tree, TreeNode *node) {
+int tree_add_node(Tree *tree, TreeNode *node) {
     cvector_push_back((*tree), node);
     assert(*tree != NULL);
     int new_id = cvector_size((*tree)) - 1;
@@ -73,7 +82,7 @@ void add_subtree(Tree *dest, Tree source, int nd, int ns) {
     source[ns]->adj = hashmap_new();
 
     source[ns]->parent = nd;
-    int new_pos = add_tree_node(dest, source[ns]);
+    int new_pos = tree_add_node(dest, source[ns]);
     int num_adj_s = cvector_size(neighbours);
     int i;
 
@@ -89,7 +98,7 @@ void add_subtree(Tree *dest, Tree source, int nd, int ns) {
     cvector_free(neighbours);
 }
 
-void merge_trees_dfs(Tree *dest, Tree source, int nd, int ns) {
+void tree_merge_dfs(Tree *dest, Tree source, int nd, int ns) {
     // printf("Merging trees nd: %d, ns: %d ld: %lu, ls: %lu \n", nd, ns,
     //    cvector_size((*dest)), cvector_size(source));
     // printf("Source has key %d\n", source[ns]->key);
@@ -117,7 +126,7 @@ void merge_trees_dfs(Tree *dest, Tree source, int nd, int ns) {
             // printf("Increase value (new value: %d)\n",
             //        (*dest)[dest_pos]->value);
 
-            merge_trees_dfs(dest, source, dest_pos, source_pos);
+            tree_merge_dfs(dest, source, dest_pos, source_pos);
             // printf("recusive call ended\n");
 
         } else {
@@ -129,13 +138,12 @@ void merge_trees_dfs(Tree *dest, Tree source, int nd, int ns) {
     cvector_free(neighbours);
 }
 
-void merge_trees(Tree *dest, Tree source) {
-    merge_trees_dfs(dest, source, 0, 0);
-}
+void tree_merge(Tree *dest, Tree source) { tree_merge_dfs(dest, source, 0, 0); }
 
-Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
-                            IndexMap index_map, hashmap_element *items_count,
-                            int num_items, int *sorted_indices) {
+Tree tree_build_from_transaction(int rank, int world_size,
+                                 Transaction *transaction, IndexMap index_map,
+                                 hashmap_element *items_count, int num_items,
+                                 int *sorted_indices) {
     // printf("%d C.\n", rank);
 
     int n_items = cvector_size((*transaction));
@@ -160,7 +168,7 @@ Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
     int *transaction_sorted_indices = (int *)malloc(n_items * sizeof(int));
     sort(elements, n_items, transaction_sorted_indices, 0, n_items - 1, 1);
 
-    Tree tree = init_tree();
+    Tree tree = tree_new();
     // printf("%d E.\n", rank);
     for (int i = 0; i < n_items; i++) {
         assert(transaction_sorted_indices[i] >= 0);
@@ -178,9 +186,9 @@ Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
         assert(sorted_indices[pos] < num_items);
         // int value = items_count[sorted_indices[pos]].value;
 
-        TreeNode *node = init_tree_node(sorted_indices[pos], 1, i);
+        TreeNode *node = tree_node_new(sorted_indices[pos], 1, i);
         assert(node != NULL);
-        assert(add_tree_node(&tree, node) == i + 1);
+        assert(tree_add_node(&tree, node) == i + 1);
 
         // printf("%d Ed value %d.\n", rank, value);
         // printf("(%s : %d [%d]) ", item, pos, value);
@@ -198,14 +206,16 @@ Tree build_transaction_tree(int rank, int world_size, Transaction *transaction,
     return tree;
 }
 
-Tree build_tree(int rank, int world_size, TransactionsList transactions,
-                IndexMap index_map, hashmap_element *items_count, int num_items,
-                int *sorted_indices, int num_threads) {
+Tree tree_build_from_transactions(int rank, int world_size,
+                                  TransactionsList transactions,
+                                  IndexMap index_map,
+                                  hashmap_element *items_count, int num_items,
+                                  int *sorted_indices, int num_threads) {
     // Tree process_tree;
     // # omp parallel for
     // Tree trees[];
     // for i, transaction in transactions:
-    //     trees[i] = build_tree(transaction)
+    //     trees[i] = tree_build_from_transactions(transaction)
 
     // 0
     //
@@ -234,7 +244,7 @@ Tree build_tree(int rank, int world_size, TransactionsList transactions,
                 // printf("Process %d Thread %d Merging trees %d and %d\n",
                 // rank,
                 //        omp_get_thread_num(), i - pow / 2, i);
-                merge_trees(&trees[i - pow / 2], trees[i]);
+                tree_merge(&trees[i - pow / 2], trees[i]);
                 // printf("Before freeing\n");
                 free_tree(&(trees[i]));
                 // printf("DONE MERGING Thread %d Merging trees %d and %d\n",
@@ -243,13 +253,13 @@ Tree build_tree(int rank, int world_size, TransactionsList transactions,
                 // if (i % 100000 == 0)
                 //     printf("Process %d Thread %d Building tree %d\n", rank,
                 //            omp_get_thread_num(), i);
-                trees[i] = build_transaction_tree(
+                trees[i] = tree_build_from_transaction(
                     rank, world_size, &(transactions[i]), index_map,
                     items_count, num_items, sorted_indices);
                 // printf("DONE BUILDING Thread %d Building tree %d size:
                 // %lu\n",
                 //        omp_get_thread_num(), i, cvector_size(trees[i]));
-                // print_tree(trees[i]);
+                // tree_print(trees[i]);
                 // for (int j = 1; j < cvector_size(trees[i]); j++) {
                 //     assert(trees[i][j]->parent != j);
                 //     int x;
@@ -260,7 +270,7 @@ Tree build_tree(int rank, int world_size, TransactionsList transactions,
         }
         // free_transactions(&transactions);
     }
-    // print_tree(trees[0]);
+    // tree_print(trees[0]);
     // free_tree(trees[0]);
     // for (int i = 0; i < n_transactions; i++)
     //     free_tree(&(trees[i]));

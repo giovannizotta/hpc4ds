@@ -300,11 +300,11 @@ void get_sorted_indices(int rank, int world_size, int *sorted_indices,
 }
 
 void parse_tree(TreeNodeToSend *nodes, int num_nodes, Tree *dest) {
-    *dest = init_tree();
+    *dest = tree_new();
     for (int i = 1; i < num_nodes; i++) {
         TreeNode *node =
-            init_tree_node(nodes[i].key, nodes[i].value, nodes[i].parent);
-        add_tree_node(dest, node);
+            tree_node_new(nodes[i].key, nodes[i].value, nodes[i].parent);
+        tree_add_node(dest, node);
     }
 }
 
@@ -350,7 +350,7 @@ void recv_tree(int rank, int world_size, int source, Tree *tree,
     Tree received_tree;
     parse_tree(nodes, size, &received_tree);
 
-    merge_trees(tree, received_tree);
+    tree_merge(tree, received_tree);
     // printf("RECEIVE: map merged!\n");
     // hashmap_print(*support_map);
     free(nodes);
