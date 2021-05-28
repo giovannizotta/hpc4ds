@@ -115,8 +115,7 @@ int main(int argc, char **argv) {
     print_log(debug, rank, start_time, end_time, "built local tree");
     start_time = MPI_Wtime();
 
-    get_global_tree(rank, world_size, &tree, items_count, num_items,
-                    sorted_indices);
+    get_global_tree(rank, world_size, &tree);
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "received global tree");
 
