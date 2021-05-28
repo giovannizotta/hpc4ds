@@ -220,7 +220,7 @@ Tree tree_build_from_transaction(int rank, int world_size,
             cvector_push_back(elements, element);
         }
     }
-    free_transaction(transaction);
+    transaction_free(transaction);
 
     n_items = cvector_size(elements);
 

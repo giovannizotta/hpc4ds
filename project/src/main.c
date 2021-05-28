@@ -54,11 +54,11 @@ int main(int argc, char **argv) {
     start_time = MPI_Wtime();
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
-    read_transactions(&transactions, argv[1], rank, world_size, &support_map);
+    transactions_read(&transactions, argv[1], rank, world_size, &support_map);
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "read transactions");
 
-    // write_transactions(rank, transactions);
+    // transactions_write(rank, transactions);
     start_time = MPI_Wtime();
     hashmap_element *items_count = NULL;
     int num_items;
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
                                              sorted_indices, num_threads);
     // printf("%d built tree\n", rank);
     hashmap_free(index_map);
-    free_transactions(&transactions);
+    transactions_free(&transactions);
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "built local tree");
     start_time = MPI_Wtime();
