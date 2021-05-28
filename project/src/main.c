@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 
     /*--- FREE MEMORY ---*/
     if (tree != NULL)
-        free_tree(&tree);
+        tree_free(&tree);
     free(sorted_indices);
     if (rank != 0)
         free(items_count);

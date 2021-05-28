@@ -404,7 +404,7 @@ void send_tree(int dest, Tree *tree,
     cvector_vector_type(TreeNodeToSend) nodes = NULL;
 
     tree_get_nodes(*tree, &nodes);
-    free_tree(tree);
+    tree_free(tree);
 
     // send size
     MPI_Send(&size, 1, MPI_INT, dest, 0, MPI_COMM_WORLD);
