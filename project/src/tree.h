@@ -21,10 +21,9 @@ TreeNode *tree_node_new(int key, int value, int parent);
 void tree_node_free(TreeNode *node);
 
 Tree tree_new();
-void free_tree(Tree *tree);
+void tree_free(Tree *tree);
 int tree_add_node(Tree *tree, TreeNode *node);
 void tree_merge(Tree *dest, Tree source);
-void tree_merge_dfs(Tree *dest, Tree source, int nd, int ns);
 void tree_get_nodes(Tree tree, cvector_vector_type(TreeNodeToSend) * nodes);
 void tree_print(Tree tree);
 

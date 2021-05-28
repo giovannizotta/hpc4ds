@@ -318,7 +318,7 @@ void send_tree(int rank, int world_size, int dest, Tree *tree,
     cvector_vector_type(TreeNodeToSend) nodes = NULL;
 
     tree_get_nodes(*tree, &nodes);
-    free_tree(tree);
+    tree_free(tree);
 
     // printf("Size sent\n");
     // send buffer
