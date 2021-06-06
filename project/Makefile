@@ -1,7 +1,7 @@
 FILENAME?="data/small_dataset.txt"
 N_PROC?=4
 N_THREAD?=1
-MIN_SUPPORT?=1
+MIN_SUPPORT?=0.2
 DEBUG?=0
 
 main: help

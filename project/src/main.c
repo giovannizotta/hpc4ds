@@ -37,17 +37,21 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    int num_threads = 1, min_support = 1;
+    int num_threads = 1;
+    double min_support = 0;
     bool debug = false;
     if (argc > 2)
         num_threads = atoi(argv[2]);
     if (argc > 3)
-        min_support = atoi(argv[3]);
+        min_support = atof(argv[3]);
     if (argc > 4)
         debug = atoi(argv[4]);
 
     if (rank == 0)
         print_log_header(debug);
+
+
+    
 
     double start_time, end_time;
     /*--- READ TRANSACTION AND SUPPORT MAP ---*/
@@ -55,6 +59,10 @@ int main(int argc, char **argv) {
     TransactionsList transactions = NULL;
     SupportMap support_map = hashmap_new();
     transactions_read(&transactions, argv[1], rank, world_size, &support_map);
+    int num_transactions = cvector_size(transactions);
+    int num_global_transactions = 0;
+    MPI_Allreduce(&num_transactions, &num_global_transactions, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "read transactions");
 
@@ -63,7 +71,7 @@ int main(int argc, char **argv) {
     hashmap_element *items_count = NULL;
     int num_items;
     get_global_map(rank, world_size, &support_map, &items_count, &num_items,
-                   min_support);
+                   min_support * num_global_transactions);
     hashmap_free(support_map);
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "received global map");
