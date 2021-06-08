@@ -121,9 +121,14 @@ int main(int argc, char **argv) {
     transactions_free(&transactions);
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "built local tree");
+    fprintf(stderr, "%d local_tree_size: %lu\n", rank, cvector_size(tree));
+
     start_time = MPI_Wtime();
 
     get_global_tree(rank, world_size, &tree);
+    if( rank == 0){
+        fprintf(stderr, "global_tree_size: %lu\n", cvector_size(tree));
+    }
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "received global tree");
 
