@@ -508,7 +508,7 @@ void get_global_tree(int rank, int world_size, Tree *tree) {
         }
     }
 
-    broadcast_tree(rank, tree, DT_TREE_NODE);
+    // broadcast_tree(rank, tree, DT_TREE_NODE);
 
     return;
 }

@@ -37,24 +37,24 @@ do
                             SUB_NAME=${TIMESTAMP}_${ITER}_${MIN_SUPPORT}_${N_PROC}_${N_THREAD}_${FILENAME}
                             echo ${SUB_NAME}
                             sleep 1
-cat > sub_scripts/${SUB_NAME}_sub.sh <<EOF
+cat > hpc4ds/project/sub_scripts/sub.sh <<EOF
 #PBS -l select=${N_NODES}:ncpus=${N_CPU}:mem=${RAM}gb:net_type=IB
 
 #PBS -l walltime=1:50:30 q
 
 #PBS -q short_cpuQ
 
-#PBS -o sub_results/$(basename ${D})/out_${SUB_NAME}
+#PBS -o hpc4ds/project/sub_results/$(basename ${D})/out_${SUB_NAME}
 
-#PBS -e sub_results/$(basename ${D})/err_${SUB_NAME}
+#PBS -e hpc4ds/project/sub_results/$(basename ${D})/err_${SUB_NAME}
 
 
 module load mpich-3.2
 
 /usr/bin/time -v mpirun.actual -n ${N_PROC} ${BIN} ${FILE} ${N_THREAD} ${MIN_SUPPORT} ${DEBUG} 
 EOF
-                            # chmod +x sub_scripts/${SUB_NAME}_sub.sh
-                            # qsub sub_scripts/sub.sh
+                            chmod +x hpc4ds/project/sub_scripts/sub.sh
+                            qsub hpc4ds/project/sub_scripts/sub.sh
                         fi
                     done
                 done
