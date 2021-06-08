@@ -5,14 +5,13 @@ DATA_DIR=$1
 
 N_NODES=4
 N_CPU=4
-RAM=32
+RAM=64
 DEBUG=1
 rm -rf sub_scripts
 mkdir -p sub_scripts
 rm -rf sub_results
 mkdir -p sub_results
 
-echo $DATA_DIR
 for D in ${DATA_DIR}/*
 do
     mkdir -p sub_results/$(basename ${D})
@@ -21,7 +20,7 @@ done
 
 for ITER in 1 2 3 4 5 
 do
-    for MIN_SUPPORT in 0.05 0.1 0.2
+    for MIN_SUPPORT in 0.0001 0.001 0.005
     do
         for N_PROC in 1 2 4
         do
@@ -39,7 +38,7 @@ do
                             echo ${SUB_NAME}
                             sleep 1
 cat > sub_scripts/sub.sh <<EOF
-#PBS -l select=${N_PROC}:ncpus=${N_THREAD}:mem=${RAM}gb:net_type=IB
+#PBS -l select=${N_PROC}:ncpus=${N_CPU}:mem=${RAM}gb:net_type=IB
 
 #PBS -l walltime=0:50:30
 
