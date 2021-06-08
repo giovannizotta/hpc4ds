@@ -289,7 +289,7 @@ void recv_indices(int rank, int source, int *sorted_indices,
 
     MPI_Status status;
 
-    int position = source * length;
+    int position = min(num_items, source * length);
     MPI_Recv(sorted_indices + position, size, MPI_INT, source, 0,
              MPI_COMM_WORLD, &status);
     MPI_Get_count(&status, MPI_INT, &size);

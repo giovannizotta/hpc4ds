@@ -82,6 +82,7 @@ int main(int argc, char **argv) {
     int *sorted_indices = (int *)malloc(num_items * sizeof(int));
     int start = length * rank;
     int end = min(length * (rank + 1), num_items) - 1;
+    start = start >= num_items ? end + 1 : start;
     sort(items_count, num_items, sorted_indices, start, end, num_threads);
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "sorted local items");

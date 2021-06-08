@@ -7,7 +7,7 @@ DEBUG?=0
 main: help
 
 build:
-	@mpicc -std=gnu99 -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
+	@mpicc -O2 -std=gnu99 -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
 
 run_local:
 	@mpiexec -n $(N_PROC) \

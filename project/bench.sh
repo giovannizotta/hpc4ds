@@ -4,7 +4,7 @@ BIN="hpc4ds/project/bin/main.out"
 DATA_DIR=$1
 
 N_NODES=4
-N_CPU=4
+N_CPU=6
 RAM=64
 DEBUG=1
 rm -rf sub_scripts
@@ -18,13 +18,13 @@ do
     # echo $(basename ${D})
 done
 
-for ITER in 1 2 3 4 5 
+for ITER in 1 2 3
 do
-    for MIN_SUPPORT in 0.0001 0.001 0.005
+    for MIN_SUPPORT in 0.0001 0.0005 0.005
     do
-        for N_PROC in 1 2 4
+        for N_PROC in 1 16 64
         do
-            for N_THREAD in 1 2 4
+            for N_THREAD in 1 4 8
             do
                 for D in ${DATA_DIR}/*
                 do
@@ -37,10 +37,10 @@ do
                             SUB_NAME=${TIMESTAMP}_${ITER}_${MIN_SUPPORT}_${N_PROC}_${N_THREAD}_${FILENAME}
                             echo ${SUB_NAME}
                             sleep 1
-cat > sub_scripts/sub.sh <<EOF
-#PBS -l select=${N_PROC}:ncpus=${N_CPU}:mem=${RAM}gb:net_type=IB
+cat > sub_scripts/${SUB_NAME}_sub.sh <<EOF
+#PBS -l select=${N_NODES}:ncpus=${N_CPU}:mem=${RAM}gb:net_type=IB
 
-#PBS -l walltime=0:50:30
+#PBS -l walltime=1:50:30 q
 
 #PBS -q short_cpuQ
 
@@ -53,8 +53,8 @@ module load mpich-3.2
 
 /usr/bin/time -v mpirun.actual -n ${N_PROC} ${BIN} ${FILE} ${N_THREAD} ${MIN_SUPPORT} ${DEBUG} 
 EOF
-                            chmod +x sub_scripts/sub.sh
-                            qsub sub_scripts/sub.sh
+                            # chmod +x sub_scripts/${SUB_NAME}_sub.sh
+                            # qsub sub_scripts/sub.sh
                         fi
                     done
                 done
