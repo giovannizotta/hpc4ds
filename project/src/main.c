@@ -129,6 +129,7 @@ int main(int argc, char **argv) {
     get_global_tree(rank, world_size, &tree);
     if( rank == 0){
         fprintf(stderr, "global_tree_size: %lu\n", cvector_size(tree));
+        fprintf(stderr, "original_num_items: %d\n", num_items);
     }
     end_time = MPI_Wtime();
     print_log(debug, rank, start_time, end_time, "received global tree");
