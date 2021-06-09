@@ -6,6 +6,8 @@ DEBUG?=0
 
 main: help
 
+all: clean build run_local 
+
 build:
 	@mpicc -O2 -std=gnu99 -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
 
@@ -17,13 +19,21 @@ time_run_local:
 	@/usr/bin/time -v mpiexec -n $(N_PROC) \
 	bin/main.out $(FILENAME) $(N_THREAD) $(MIN_SUPPORT) $(DEBUG)
 
-all: clean build run_local 
-
 clean: 
 	@rm -f bin/*
 
 help: 
 	@echo "Not like this"
+
+latex_doc:
+	@doxygen config.conf
+	@cd doc/doxygen/latex && make all
+
+show_latex_doc:
+	@evince doc/doxygen/latex/refman.pdf
+
+clean_doc:
+	@rm -rf doc/doxygen
 
 
 # valgrind --leak-check=yes \

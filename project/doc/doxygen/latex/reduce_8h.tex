@@ -1,0 +1,438 @@
+\hypertarget{reduce_8h}{}\doxysubsection{src/reduce.h File Reference}
+\label{reduce_8h}\index{src/reduce.h@{src/reduce.h}}
+
+
+Functions that perform the exchange of data between M\+PI processes.  
+
+
+{\ttfamily \#include \char`\"{}mpi.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}tree.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}types.\+h\char`\"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+M\+P\+I\+\_\+\+Datatype \mbox{\hyperlink{reduce_8h_aff5b57bc7346604a83b89bd9238ed351}{define\+\_\+datatype\+\_\+hashmap\+\_\+element}} ()
+\begin{DoxyCompactList}\small\item\em Define a datatype for an hashmap element in order to be able to send it with M\+PI. \end{DoxyCompactList}\item 
+M\+P\+I\+\_\+\+Datatype \mbox{\hyperlink{reduce_8h_acdda8fcfa536d013b5e326e05340bc0d}{define\+\_\+datatype\+\_\+tree\+\_\+node}} ()
+\begin{DoxyCompactList}\small\item\em Define an M\+PI Datatype for a \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} in order to be able to send it with M\+PI. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_add61358068899f20eb9c085f504b69d7}{merge\+\_\+map}} (\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map, hashmap\+\_\+element $\ast$elements, int size)
+\begin{DoxyCompactList}\small\item\em Merge the current map with an array of elements. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_ad3d3859011cd02351dd38ed28bb162d4}{recv\+\_\+map}} (int rank, int world\+\_\+size, int source, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map, M\+P\+I\+\_\+\+Datatype D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT)
+\begin{DoxyCompactList}\small\item\em Receive an array of hashmap elements with M\+PI. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_af986e488af7a507064222345a30e0b15}{send\+\_\+map}} (int rank, int world\+\_\+size, int dest, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map, M\+P\+I\+\_\+\+Datatype D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT)
+\begin{DoxyCompactList}\small\item\em Send an array of hashmap elements with M\+PI. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_aadb997cc45f27f8e60cdc0cefff0b50b}{broadcast\+\_\+map}} (int rank, int world\+\_\+size, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map, hashmap\+\_\+element $\ast$$\ast$items\+\_\+count, int $\ast$num\+\_\+items, M\+P\+I\+\_\+\+Datatype D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT, int min\+\_\+support)
+\begin{DoxyCompactList}\small\item\em Broadcast all the elements of a Support\+Map to every M\+PI process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_ad954bf5859e1d67e41e33f188b89991d}{get\+\_\+global\+\_\+map}} (int rank, int world\+\_\+size, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map, hashmap\+\_\+element $\ast$$\ast$items\+\_\+count, int $\ast$num\+\_\+items, int min\+\_\+support)
+\begin{DoxyCompactList}\small\item\em Get the global map object for every M\+PI process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a471626316e5dc339f77cea2cd794714c}{merge\+\_\+indices}} (int rank, int $\ast$sorted\+\_\+indices, int start1, int end1, int start2, int end2, hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items)
+\begin{DoxyCompactList}\small\item\em Merge two arrays of sorted indices into a unique array of sorted indices. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_aaffd71a02477c8b41f9a1a5b90ed047b}{recv\+\_\+indices}} (int rank, int source, int $\ast$sorted\+\_\+indices, int start, int $\ast$end, int length, int size, hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items)
+\begin{DoxyCompactList}\small\item\em Receive an array of sorted indices. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_ad01d61998e2e7d6f249b5113392a4abc}{send\+\_\+indices}} (int rank, int dest, int $\ast$sorted\+\_\+indices, int start, int end, int length)
+\begin{DoxyCompactList}\small\item\em Send an array of sorted indices. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a6ec982947c3c96868546abdbe17e985d}{broadcast\+\_\+indices}} (int rank, int $\ast$sorted\+\_\+indices, int num\+\_\+items)
+\begin{DoxyCompactList}\small\item\em Broadcast the final global array of indices to every M\+PI process in the world. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a7613e49e0d5ce5516f27419f4f9cc5eb}{get\+\_\+sorted\+\_\+indices}} (int rank, int world\+\_\+size, int $\ast$sorted\+\_\+indices, int start, int end, int length, hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items)
+\begin{DoxyCompactList}\small\item\em Get the global sorted indices array for every M\+PI process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a4e83c08f595b77006130b005643834d2}{parse\+\_\+tree}} (\mbox{\hyperlink{tree_8h_structTreeNodeToSend}{Tree\+Node\+To\+Send}} $\ast$nodes, int num\+\_\+nodes, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$dest)
+\begin{DoxyCompactList}\small\item\em Parse an array of Tree\+Nodes\+To\+Send into a Tree structure. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_ad765b351602bede172893c10b3dfdaf6}{send\+\_\+tree}} (int dest, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$tree, M\+P\+I\+\_\+\+Datatype D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE)
+\begin{DoxyCompactList}\small\item\em Sends a tree to an M\+PI process and frees up the memory. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a3819aae246c012832fecdc81a26b4151}{recv\+\_\+tree}} (int source, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$tree, M\+P\+I\+\_\+\+Datatype D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE)
+\begin{DoxyCompactList}\small\item\em Receive a tree from an M\+PI process. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a8d34dfcf0492ac2e90090d726dc76e3f}{broadcast\+\_\+tree}} (int rank, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$tree, M\+P\+I\+\_\+\+Datatype D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE)
+\begin{DoxyCompactList}\small\item\em Broadcast the final F\+P-\/\+Tree to every M\+PI process in the world. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{reduce_8h_a3ac014cf59a31d24cdf0bdc637034385}{get\+\_\+global\+\_\+tree}} (int rank, int world\+\_\+size, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$tree)
+\begin{DoxyCompactList}\small\item\em Get the global F\+P-\/tree on every M\+PI process. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Functions that perform the exchange of data between M\+PI processes. 
+
+
+
+\doxysubsubsection{Function Documentation}
+\mbox{\Hypertarget{reduce_8h_a6ec982947c3c96868546abdbe17e985d}\label{reduce_8h_a6ec982947c3c96868546abdbe17e985d}} 
+\index{reduce.h@{reduce.h}!broadcast\_indices@{broadcast\_indices}}
+\index{broadcast\_indices@{broadcast\_indices}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{broadcast\_indices()}{broadcast\_indices()}}
+{\footnotesize\ttfamily void broadcast\+\_\+indices (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{num\+\_\+items }\end{DoxyParamCaption})}
+
+
+
+Broadcast the final global array of indices to every M\+PI process in the world. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em sorted\+\_\+indices} & The array of sorted indices that has to be broadcasted \\
+\hline
+{\em num\+\_\+items} & The number of elements of the sorted\+\_\+indices array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_aadb997cc45f27f8e60cdc0cefff0b50b}\label{reduce_8h_aadb997cc45f27f8e60cdc0cefff0b50b}} 
+\index{reduce.h@{reduce.h}!broadcast\_map@{broadcast\_map}}
+\index{broadcast\_map@{broadcast\_map}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{broadcast\_map()}{broadcast\_map()}}
+{\footnotesize\ttfamily void broadcast\+\_\+map (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map,  }\item[{hashmap\+\_\+element $\ast$$\ast$}]{items\+\_\+count,  }\item[{int $\ast$}]{num\+\_\+items,  }\item[{M\+P\+I\+\_\+\+Datatype}]{D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT,  }\item[{int}]{min\+\_\+support }\end{DoxyParamCaption})}
+
+
+
+Broadcast all the elements of a Support\+Map to every M\+PI process. 
+
+This is used by the master process to send the global version of the map to every M\+PI process in the world
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em world\+\_\+size} & The number of M\+PI processes in the world \\
+\hline
+{\em support\+\_\+map} & The map from which to extract the elements to be sent \\
+\hline
+{\em items\+\_\+count} & A pointer to an array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & A pointer to an integer describing the total number of items in the broadcasted map \\
+\hline
+{\em D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT} & An M\+PI datatype that describes the data structure that has to be sent with M\+PI \\
+\hline
+{\em min\+\_\+support} & The mininum support that an item has to have in order to be contained in the final map \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_a8d34dfcf0492ac2e90090d726dc76e3f}\label{reduce_8h_a8d34dfcf0492ac2e90090d726dc76e3f}} 
+\index{reduce.h@{reduce.h}!broadcast\_tree@{broadcast\_tree}}
+\index{broadcast\_tree@{broadcast\_tree}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{broadcast\_tree()}{broadcast\_tree()}}
+{\footnotesize\ttfamily void broadcast\+\_\+tree (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{tree,  }\item[{M\+P\+I\+\_\+\+Datatype}]{D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE }\end{DoxyParamCaption})}
+
+
+
+Broadcast the final F\+P-\/\+Tree to every M\+PI process in the world. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em tree} & The tree that has to be broadcasted in case the process rank is 0, otherwise the tree which the final tree will be stored \\
+\hline
+{\em D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE} & M\+P\+I\+\_\+\+Datatype describing a \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_aff5b57bc7346604a83b89bd9238ed351}\label{reduce_8h_aff5b57bc7346604a83b89bd9238ed351}} 
+\index{reduce.h@{reduce.h}!define\_datatype\_hashmap\_element@{define\_datatype\_hashmap\_element}}
+\index{define\_datatype\_hashmap\_element@{define\_datatype\_hashmap\_element}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{define\_datatype\_hashmap\_element()}{define\_datatype\_hashmap\_element()}}
+{\footnotesize\ttfamily M\+P\+I\+\_\+\+Datatype define\+\_\+datatype\+\_\+hashmap\+\_\+element (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Define a datatype for an hashmap element in order to be able to send it with M\+PI. 
+
+\begin{DoxyReturn}{Returns}
+M\+P\+I\+\_\+\+Datatype describing an hashmap element 
+\end{DoxyReturn}
+\mbox{\Hypertarget{reduce_8h_acdda8fcfa536d013b5e326e05340bc0d}\label{reduce_8h_acdda8fcfa536d013b5e326e05340bc0d}} 
+\index{reduce.h@{reduce.h}!define\_datatype\_tree\_node@{define\_datatype\_tree\_node}}
+\index{define\_datatype\_tree\_node@{define\_datatype\_tree\_node}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{define\_datatype\_tree\_node()}{define\_datatype\_tree\_node()}}
+{\footnotesize\ttfamily M\+P\+I\+\_\+\+Datatype define\+\_\+datatype\+\_\+tree\+\_\+node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Define an M\+PI Datatype for a \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} in order to be able to send it with M\+PI. 
+
+\begin{DoxyReturn}{Returns}
+M\+P\+I\+\_\+\+Datatype describing a \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{reduce_8h_ad954bf5859e1d67e41e33f188b89991d}\label{reduce_8h_ad954bf5859e1d67e41e33f188b89991d}} 
+\index{reduce.h@{reduce.h}!get\_global\_map@{get\_global\_map}}
+\index{get\_global\_map@{get\_global\_map}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{get\_global\_map()}{get\_global\_map()}}
+{\footnotesize\ttfamily void get\+\_\+global\+\_\+map (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map,  }\item[{hashmap\+\_\+element $\ast$$\ast$}]{items\+\_\+count,  }\item[{int $\ast$}]{num\+\_\+items,  }\item[{int}]{min\+\_\+support }\end{DoxyParamCaption})}
+
+
+
+Get the global map object for every M\+PI process. 
+
+This function follows a tree-\/like structure to build the global map of items of our program. Initially, every process has its own partial map of items. Then, processes which meet the condition (rank \% pow != 0), where pow is a function of the current level in the tree, sends its partial map to the specified destination. On the contrary, processes which meet the condition (rank \% pow == 0) receive the map from the other processes, and then merge the received elements with their current map. This is done until the only process in the current level is the process number 0. Upon reaching that state, it means that process 0 now has the complete map of every process and can broadcast its knowledge to the whole domain.
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em world\+\_\+size} & The number of M\+PI processes in the world \\
+\hline
+{\em support\+\_\+map} & The map from which to extract the elements to be sent \\
+\hline
+{\em items\+\_\+count} & A pointer to an array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & A pointer to an integer describing the total number of items in the broadcasted map \\
+\hline
+{\em min\+\_\+support} & The mininum support that an item has to have in order to be contained in the final map \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_a3ac014cf59a31d24cdf0bdc637034385}\label{reduce_8h_a3ac014cf59a31d24cdf0bdc637034385}} 
+\index{reduce.h@{reduce.h}!get\_global\_tree@{get\_global\_tree}}
+\index{get\_global\_tree@{get\_global\_tree}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{get\_global\_tree()}{get\_global\_tree()}}
+{\footnotesize\ttfamily void get\+\_\+global\+\_\+tree (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{tree }\end{DoxyParamCaption})}
+
+
+
+Get the global F\+P-\/tree on every M\+PI process. 
+
+This function follows a tree-\/like structure to build the final F\+P-\/tree. Initially, every process has its own partial tree composed by the transactions of its local assigned chunk. Then, processes which meet the condition (rank \% pow != 0), where pow is a function of the current level in the tree, sends its partial tree to the specified destination. On the contrary, processes which meet the condition (rank \% pow == 0) receive the F\+P-\/tree from the other processes, and then merge the received partial F\+P-\/tree with their current F\+P-\/tree. This is done until the only process in the current level is the process number 0. Upon reaching that state, it means that process 0 now has the complete F\+P-\/tree and can broadcast its knowledge to the whole domain.
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em world\+\_\+size} & The number of processes in the current world \\
+\hline
+{\em tree} & The tree that has to be sent/received. This structure is heavily manipulated during the execution of this function. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_a7613e49e0d5ce5516f27419f4f9cc5eb}\label{reduce_8h_a7613e49e0d5ce5516f27419f4f9cc5eb}} 
+\index{reduce.h@{reduce.h}!get\_sorted\_indices@{get\_sorted\_indices}}
+\index{get\_sorted\_indices@{get\_sorted\_indices}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{get\_sorted\_indices()}{get\_sorted\_indices()}}
+{\footnotesize\ttfamily void get\+\_\+sorted\+\_\+indices (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end,  }\item[{int}]{length,  }\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items }\end{DoxyParamCaption})}
+
+
+
+Get the global sorted indices array for every M\+PI process. 
+
+This function follows a tree-\/like structure to build the global sorted array of indices of the items of our program. Initially, every process has its own partial array of sorted indices. Then, processes which meet the condition (rank \% pow != 0), where pow is a function of the current level in the tree, sends its partial array to the specified destination. On the contrary, processes which meet the condition (rank \% pow == 0) receive the array from the other processes, and then merge the received elements with their current array. This is done until the only process in the current level is the process number 0. Upon reaching that state, it means that process 0 now has the complete array of every process and can broadcast its knowledge to the whole domain.
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em world\+\_\+size} & The number of M\+PI processes in the current world \\
+\hline
+{\em sorted\+\_\+indices} & The array of sorted indices that will be used to send the data \\
+\hline
+{\em start} & The starting index of the items that the function will send \\
+\hline
+{\em end} & The ending index of the items that the function will send \\
+\hline
+{\em length} & The length of each process\textquotesingle{} original interval width \\
+\hline
+{\em items\+\_\+count} & An array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & The number of items in the sorted\+\_\+indices array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_a471626316e5dc339f77cea2cd794714c}\label{reduce_8h_a471626316e5dc339f77cea2cd794714c}} 
+\index{reduce.h@{reduce.h}!merge\_indices@{merge\_indices}}
+\index{merge\_indices@{merge\_indices}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{merge\_indices()}{merge\_indices()}}
+{\footnotesize\ttfamily void merge\+\_\+indices (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start1,  }\item[{int}]{end1,  }\item[{int}]{start2,  }\item[{int}]{end2,  }\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items }\end{DoxyParamCaption})}
+
+
+
+Merge two arrays of sorted indices into a unique array of sorted indices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em sorted\+\_\+indices} & The array of sorted indices that contains both arrays that have to be sorted \\
+\hline
+{\em start1} & The starting index of the first array \\
+\hline
+{\em end1} & The ending index of the first array \\
+\hline
+{\em start2} & The starting index of the second array \\
+\hline
+{\em end2} & The ending index of the second array \\
+\hline
+{\em items\+\_\+count} & An array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & The number of items in the sorted\+\_\+indices array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_add61358068899f20eb9c085f504b69d7}\label{reduce_8h_add61358068899f20eb9c085f504b69d7}} 
+\index{reduce.h@{reduce.h}!merge\_map@{merge\_map}}
+\index{merge\_map@{merge\_map}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{merge\_map()}{merge\_map()}}
+{\footnotesize\ttfamily void merge\+\_\+map (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map,  }\item[{hashmap\+\_\+element $\ast$}]{elements,  }\item[{int}]{size }\end{DoxyParamCaption})}
+
+
+
+Merge the current map with an array of elements. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em support\+\_\+map} & A pointer to the map which will be populated with the merged items \\
+\hline
+{\em elements} & The array of hashmap elements to merge \\
+\hline
+{\em size} & The size of the elements array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_a4e83c08f595b77006130b005643834d2}\label{reduce_8h_a4e83c08f595b77006130b005643834d2}} 
+\index{reduce.h@{reduce.h}!parse\_tree@{parse\_tree}}
+\index{parse\_tree@{parse\_tree}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{parse\_tree()}{parse\_tree()}}
+{\footnotesize\ttfamily void parse\+\_\+tree (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_structTreeNodeToSend}{Tree\+Node\+To\+Send}} $\ast$}]{nodes,  }\item[{int}]{num\+\_\+nodes,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{dest }\end{DoxyParamCaption})}
+
+
+
+Parse an array of Tree\+Nodes\+To\+Send into a Tree structure. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nodes} & The array of Tree\+Nodes\+To\+Send that have to be parsed \\
+\hline
+{\em num\+\_\+nodes} & The size of the nodes array \\
+\hline
+{\em dest} & A pointer to the tree that will be created \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_aaffd71a02477c8b41f9a1a5b90ed047b}\label{reduce_8h_aaffd71a02477c8b41f9a1a5b90ed047b}} 
+\index{reduce.h@{reduce.h}!recv\_indices@{recv\_indices}}
+\index{recv\_indices@{recv\_indices}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{recv\_indices()}{recv\_indices()}}
+{\footnotesize\ttfamily void recv\+\_\+indices (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{source,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int $\ast$}]{end,  }\item[{int}]{length,  }\item[{int}]{size,  }\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items }\end{DoxyParamCaption})}
+
+
+
+Receive an array of sorted indices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em source} & The rank of the M\+PI process that sends the data \\
+\hline
+{\em sorted\+\_\+indices} & The array of sorted indices where the received data will be stored \\
+\hline
+{\em start} & The starting index of the items that the function will receive \\
+\hline
+{\em end} & The ending index of the items that the function will receive \\
+\hline
+{\em length} & The length of each process\textquotesingle{} original interval width \\
+\hline
+{\em size} & The current size of the received data \\
+\hline
+{\em items\+\_\+count} & An array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & The number of items in the sorted\+\_\+indices array \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_ad3d3859011cd02351dd38ed28bb162d4}\label{reduce_8h_ad3d3859011cd02351dd38ed28bb162d4}} 
+\index{reduce.h@{reduce.h}!recv\_map@{recv\_map}}
+\index{recv\_map@{recv\_map}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{recv\_map()}{recv\_map()}}
+{\footnotesize\ttfamily void recv\+\_\+map (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{int}]{source,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map,  }\item[{M\+P\+I\+\_\+\+Datatype}]{D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT }\end{DoxyParamCaption})}
+
+
+
+Receive an array of hashmap elements with M\+PI. 
+
+First, receive the size of the array of hashmap elements and then receive the actual elements
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & M\+PI process rank \\
+\hline
+{\em world\+\_\+size} & Number of M\+PI processes in the current world \\
+\hline
+{\em source} & The rank of the M\+PI process that sends the array of elements \\
+\hline
+{\em support\+\_\+map} & A pointer to the map where the received elements have to be inserted \\
+\hline
+{\em D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT} & An M\+PI datatype that describes the data structure received \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_a3819aae246c012832fecdc81a26b4151}\label{reduce_8h_a3819aae246c012832fecdc81a26b4151}} 
+\index{reduce.h@{reduce.h}!recv\_tree@{recv\_tree}}
+\index{recv\_tree@{recv\_tree}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{recv\_tree()}{recv\_tree()}}
+{\footnotesize\ttfamily void recv\+\_\+tree (\begin{DoxyParamCaption}\item[{int}]{source,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{tree,  }\item[{M\+P\+I\+\_\+\+Datatype}]{D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE }\end{DoxyParamCaption})}
+
+
+
+Receive a tree from an M\+PI process. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em source} & The M\+PI process that is sending the data \\
+\hline
+{\em tree} & A pointer to partial tree of the current process, which will be integrated by merging the received tree \\
+\hline
+{\em D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE} & M\+P\+I\+\_\+\+Datatype describing a \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_ad01d61998e2e7d6f249b5113392a4abc}\label{reduce_8h_ad01d61998e2e7d6f249b5113392a4abc}} 
+\index{reduce.h@{reduce.h}!send\_indices@{send\_indices}}
+\index{send\_indices@{send\_indices}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{send\_indices()}{send\_indices()}}
+{\footnotesize\ttfamily void send\+\_\+indices (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{dest,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end,  }\item[{int}]{length }\end{DoxyParamCaption})}
+
+
+
+Send an array of sorted indices. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process that broadcasts the data \\
+\hline
+{\em dest} & The rank of the M\+PI process that will receive the data \\
+\hline
+{\em sorted\+\_\+indices} & The array of sorted indices that will be used to send the data \\
+\hline
+{\em start} & The starting index of the items that the function will send \\
+\hline
+{\em end} & The ending index of the items that the function will send \\
+\hline
+{\em length} & The length of each process\textquotesingle{} original interval width \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_af986e488af7a507064222345a30e0b15}\label{reduce_8h_af986e488af7a507064222345a30e0b15}} 
+\index{reduce.h@{reduce.h}!send\_map@{send\_map}}
+\index{send\_map@{send\_map}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{send\_map()}{send\_map()}}
+{\footnotesize\ttfamily void send\+\_\+map (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{int}]{dest,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map,  }\item[{M\+P\+I\+\_\+\+Datatype}]{D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT }\end{DoxyParamCaption})}
+
+
+
+Send an array of hashmap elements with M\+PI. 
+
+First, send the size of the array of hashmap elements and then send the actual elements.
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & M\+PI process rank \\
+\hline
+{\em world\+\_\+size} & Number of M\+PI processes in the current world \\
+\hline
+{\em dest} & The rank of the M\+PI process that will receive the array of elements \\
+\hline
+{\em support\+\_\+map} & A pointer to the map where the elements to be sent are stored \\
+\hline
+{\em D\+T\+\_\+\+H\+A\+S\+H\+M\+A\+P\+\_\+\+E\+L\+E\+M\+E\+NT} & An M\+PI datatype that describes the data structure that has to be sent with M\+PI \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{reduce_8h_ad765b351602bede172893c10b3dfdaf6}\label{reduce_8h_ad765b351602bede172893c10b3dfdaf6}} 
+\index{reduce.h@{reduce.h}!send\_tree@{send\_tree}}
+\index{send\_tree@{send\_tree}!reduce.h@{reduce.h}}
+\doxyparagraph{\texorpdfstring{send\_tree()}{send\_tree()}}
+{\footnotesize\ttfamily void send\+\_\+tree (\begin{DoxyParamCaption}\item[{int}]{dest,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{tree,  }\item[{M\+P\+I\+\_\+\+Datatype}]{D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE }\end{DoxyParamCaption})}
+
+
+
+Sends a tree to an M\+PI process and frees up the memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dest} & The destination process that will receive the tree \\
+\hline
+{\em tree} & The tree that has to be sent \\
+\hline
+{\em D\+T\+\_\+\+T\+R\+E\+E\+\_\+\+N\+O\+DE} & M\+P\+I\+\_\+\+Datatype describing a \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} \\
+\hline
+\end{DoxyParams}

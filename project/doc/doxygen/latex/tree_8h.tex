@@ -1,0 +1,390 @@
+\hypertarget{tree_8h}{}\doxysubsection{src/tree.h File Reference}
+\label{tree_8h}\index{src/tree.h@{src/tree.h}}
+
+
+Definition of F\+P-\/\+Tree and functions to build it.  
+
+
+{\ttfamily \#include \char`\"{}types.\+h\char`\"{}}\newline
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}}
+\begin{DoxyCompactList}\small\item\em A node of an F\+P-\/\+Tree.  \mbox{\hyperlink{tree_8h_structTreeNode}{More...}}\end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{tree_8h_structTreeNodeToSend}{Tree\+Node\+To\+Send}}
+\begin{DoxyCompactList}\small\item\em A node of an F\+P-\/\+Tree to send with M\+PI.  \mbox{\hyperlink{tree_8h_structTreeNodeToSend}{More...}}\end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{tree_8h_a68af4e77b982a5fb7300d49b9a1bea01}{T\+R\+E\+E\+\_\+\+N\+O\+D\+E\+\_\+\+N\+U\+LL}}~-\/1
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} $\ast$$\ast$ \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}
+\begin{DoxyCompactList}\small\item\em F\+P-\/\+Tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} $\ast$ \mbox{\hyperlink{tree_8h_ae1dae42687bd388d1687f56ab0e1c1b9}{tree\+\_\+node\+\_\+new}} (int key, int value, int parent)
+\begin{DoxyCompactList}\small\item\em Instantiate a new node of the tree. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a7a44d25589da32e69c83c7ab9d60a7bd}{tree\+\_\+node\+\_\+free}} (\mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} $\ast$node)
+\begin{DoxyCompactList}\small\item\em Free a tree node. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} \mbox{\hyperlink{tree_8h_acc74d966fcd3df40b668c39e79e300f5}{tree\+\_\+new}} ()
+\begin{DoxyCompactList}\small\item\em Instantiate a new tree. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a25348c717409522ec53e4f21c0694832}{tree\+\_\+free}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$tree)
+\begin{DoxyCompactList}\small\item\em Free the tree. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{tree_8h_a2f135dc24d61cc8cc9337e61a220d202}{tree\+\_\+add\+\_\+node}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$tree, \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} $\ast$node)
+\begin{DoxyCompactList}\small\item\em Add a node to the tree. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a00debfb96f8522601aeb2bdfe61f68d2}{tree\+\_\+add\+\_\+subtree}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$dest, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} source, int nd, int ns)
+\begin{DoxyCompactList}\small\item\em Add the subtree rooted in the ns(th) node of the tree source as a child of the nd(th) node of the tree dest. The source tree is modified, as the nodes are moved to the destination tree. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a36f55832d669d50524de7a92d75abc2c}{tree\+\_\+merge\+\_\+dfs}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$dest, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} source, int nd, int ns)
+\begin{DoxyCompactList}\small\item\em Merge the subtree of dest rooted in node with id nd with the subtree of source rooted in ns and store the result in dest. Also the source tree is modified. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a2ff2d70075a8c8329e65da4804f9d4ec}{tree\+\_\+merge}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$dest, \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} source)
+\begin{DoxyCompactList}\small\item\em Merge the trees dest and source and store the result in dest. The source tree is modified. It is a wrapper for. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a71b2c96fedae19c7f5bec9688eec7c67}{tree\+\_\+get\+\_\+nodes}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} tree, \mbox{\hyperlink{tree_8h_structTreeNodeToSend}{Tree\+Node\+To\+Send}} $\ast$$\ast$nodes)
+\begin{DoxyCompactList}\small\item\em Inserts into the vector nodes the nodes to send. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{tree_8h_a22ebe6cd27a0defae8d30430d806d486}{tree\+\_\+print}} (\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} tree)
+\begin{DoxyCompactList}\small\item\em Print the tree. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} \mbox{\hyperlink{tree_8h_afe0e9227c455310ecb0624b4df4f55c7}{tree\+\_\+build\+\_\+from\+\_\+transaction}} (int rank, int world\+\_\+size, \mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$transaction, \mbox{\hyperlink{types_8h_aed4c68b1f70ee57237267583467b88c6}{Index\+Map}} index\+\_\+map, hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices)
+\begin{DoxyCompactList}\small\item\em Build a tree given a transaction. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} \mbox{\hyperlink{tree_8h_a79a605d23c8e41dee8cb3830dac8ba92}{tree\+\_\+build\+\_\+from\+\_\+transactions}} (int rank, int world\+\_\+size, \mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} transactions, \mbox{\hyperlink{types_8h_aed4c68b1f70ee57237267583467b88c6}{Index\+Map}} index\+\_\+map, hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices, int num\+\_\+threads)
+\begin{DoxyCompactList}\small\item\em Build a tree given a list of transactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Definition of F\+P-\/\+Tree and functions to build it. 
+
+
+
+\doxysubsubsection{Data Structure Documentation}
+\index{TreeNode@{TreeNode}}\label{structTreeNode}
+\Hypertarget{tree_8h_structTreeNode}
+\doxyparagraph{struct Tree\+Node}
+A node of an F\+P-\/\+Tree. 
+
+\begin{DoxyFields}{Data Fields}
+\mbox{\Hypertarget{tree_8h_a537a1494ee7502dadee2651432b2f6cc}\label{tree_8h_a537a1494ee7502dadee2651432b2f6cc}} 
+map\_t&
+adj&
+Adjacency map of the node, where the values are the indices of the children of the node in the tree and the keys are the ids of the corresponding items. \\
+\hline
+
+\mbox{\Hypertarget{tree_8h_abcac6abd6ad26cca62d186feec04012e}\label{tree_8h_abcac6abd6ad26cca62d186feec04012e}} 
+int&
+key&
+Id of the item represented by the node ~\newline
+ \\
+\hline
+
+\mbox{\Hypertarget{tree_8h_aa0881d24f9bc360d239c0ed49d85b25e}\label{tree_8h_aa0881d24f9bc360d239c0ed49d85b25e}} 
+int&
+parent&
+Index of the parent of the node in the tree ~\newline
+ \\
+\hline
+
+\mbox{\Hypertarget{tree_8h_ad8c932a0758b33df786046824df5268b}\label{tree_8h_ad8c932a0758b33df786046824df5268b}} 
+int&
+value&
+Value of the item represented by the node ~\newline
+ \\
+\hline
+
+\end{DoxyFields}
+\index{TreeNodeToSend@{TreeNodeToSend}}\label{structTreeNodeToSend}
+\Hypertarget{tree_8h_structTreeNodeToSend}
+\doxyparagraph{struct Tree\+Node\+To\+Send}
+A node of an F\+P-\/\+Tree to send with M\+PI. 
+
+\begin{DoxyFields}{Data Fields}
+\mbox{\Hypertarget{tree_8h_aae2a775940ef92567dc135b8d89b04be}\label{tree_8h_aae2a775940ef92567dc135b8d89b04be}} 
+int&
+key&
+Id of the item represented by the node ~\newline
+ \\
+\hline
+
+\mbox{\Hypertarget{tree_8h_a491a3964d3b1c2273a65c44507400879}\label{tree_8h_a491a3964d3b1c2273a65c44507400879}} 
+int&
+parent&
+Index of the parent of the node in the tree ~\newline
+ \\
+\hline
+
+\mbox{\Hypertarget{tree_8h_a34760f71a9793f3cb1e6669ce048ab15}\label{tree_8h_a34760f71a9793f3cb1e6669ce048ab15}} 
+int&
+value&
+Value of the item represented by the node ~\newline
+ \\
+\hline
+
+\end{DoxyFields}
+
+
+\doxysubsubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{tree_8h_a68af4e77b982a5fb7300d49b9a1bea01}\label{tree_8h_a68af4e77b982a5fb7300d49b9a1bea01}} 
+\index{tree.h@{tree.h}!TREE\_NODE\_NULL@{TREE\_NODE\_NULL}}
+\index{TREE\_NODE\_NULL@{TREE\_NODE\_NULL}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{TREE\_NODE\_NULL}{TREE\_NODE\_NULL}}
+{\footnotesize\ttfamily \#define T\+R\+E\+E\+\_\+\+N\+O\+D\+E\+\_\+\+N\+U\+LL~-\/1}
+
+
+
+\doxysubsubsection{Typedef Documentation}
+\mbox{\Hypertarget{tree_8h_a3643d8271f795999b35e164eb42cc2f3}\label{tree_8h_a3643d8271f795999b35e164eb42cc2f3}} 
+\index{tree.h@{tree.h}!Tree@{Tree}}
+\index{Tree@{Tree}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{Tree}{Tree}}
+{\footnotesize\ttfamily typedef \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}}$\ast$ $\ast$ \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}}
+
+
+
+F\+P-\/\+Tree. 
+
+
+
+\doxysubsubsection{Function Documentation}
+\mbox{\Hypertarget{tree_8h_a2f135dc24d61cc8cc9337e61a220d202}\label{tree_8h_a2f135dc24d61cc8cc9337e61a220d202}} 
+\index{tree.h@{tree.h}!tree\_add\_node@{tree\_add\_node}}
+\index{tree\_add\_node@{tree\_add\_node}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_add\_node()}{tree\_add\_node()}}
+{\footnotesize\ttfamily int tree\+\_\+add\+\_\+node (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{tree,  }\item[{\mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} $\ast$}]{node }\end{DoxyParamCaption})}
+
+
+
+Add a node to the tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & Pointer to the tree \\
+\hline
+{\em node} & Pointer to the node to add \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The id of the node in the tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tree_8h_a00debfb96f8522601aeb2bdfe61f68d2}\label{tree_8h_a00debfb96f8522601aeb2bdfe61f68d2}} 
+\index{tree.h@{tree.h}!tree\_add\_subtree@{tree\_add\_subtree}}
+\index{tree\_add\_subtree@{tree\_add\_subtree}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_add\_subtree()}{tree\_add\_subtree()}}
+{\footnotesize\ttfamily void tree\+\_\+add\+\_\+subtree (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{dest,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}}]{source,  }\item[{int}]{nd,  }\item[{int}]{ns }\end{DoxyParamCaption})}
+
+
+
+Add the subtree rooted in the ns(th) node of the tree source as a child of the nd(th) node of the tree dest. The source tree is modified, as the nodes are moved to the destination tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dest} & Pointer to the destination tree \\
+\hline
+{\em source} & Pointer to the source tree \\
+\hline
+{\em nd} & Id of the node in the destination tree \\
+\hline
+{\em ns} & Id of the node in the source tree \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tree_8h_afe0e9227c455310ecb0624b4df4f55c7}\label{tree_8h_afe0e9227c455310ecb0624b4df4f55c7}} 
+\index{tree.h@{tree.h}!tree\_build\_from\_transaction@{tree\_build\_from\_transaction}}
+\index{tree\_build\_from\_transaction@{tree\_build\_from\_transaction}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_build\_from\_transaction()}{tree\_build\_from\_transaction()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} tree\+\_\+build\+\_\+from\+\_\+transaction (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$}]{transaction,  }\item[{\mbox{\hyperlink{types_8h_aed4c68b1f70ee57237267583467b88c6}{Index\+Map}}}]{index\+\_\+map,  }\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices }\end{DoxyParamCaption})}
+
+
+
+Build a tree given a transaction. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process \\
+\hline
+{\em world\+\_\+size} & The number of processes in the world \\
+\hline
+{\em transaction} & The transaction \\
+\hline
+{\em index\+\_\+map} & The map from item to the corresponding id \\
+\hline
+{\em items\+\_\+count} & The array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & The number of items in the sorted\+\_\+indices array \\
+\hline
+{\em sorted\+\_\+indices} & The array of the sorted indices of the items \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The built tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tree_8h_a79a605d23c8e41dee8cb3830dac8ba92}\label{tree_8h_a79a605d23c8e41dee8cb3830dac8ba92}} 
+\index{tree.h@{tree.h}!tree\_build\_from\_transactions@{tree\_build\_from\_transactions}}
+\index{tree\_build\_from\_transactions@{tree\_build\_from\_transactions}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_build\_from\_transactions()}{tree\_build\_from\_transactions()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} tree\+\_\+build\+\_\+from\+\_\+transactions (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}}}]{transactions,  }\item[{\mbox{\hyperlink{types_8h_aed4c68b1f70ee57237267583467b88c6}{Index\+Map}}}]{index\+\_\+map,  }\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{num\+\_\+threads }\end{DoxyParamCaption})}
+
+
+
+Build a tree given a list of transactions. 
+
+First, we build the trees for the single transactions. Then, we merge them in a binary-\/tree-\/like fashion.
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & The rank of the process \\
+\hline
+{\em world\+\_\+size} & The number of processes in the world \\
+\hline
+{\em transactions} & \\
+\hline
+{\em index\+\_\+map} & The map from item to the corresponding id \\
+\hline
+{\em items\+\_\+count} & The array of hashmap elements having the item string as a key and the support count as a value \\
+\hline
+{\em num\+\_\+items} & The number of items in the sorted\+\_\+indices array \\
+\hline
+{\em sorted\+\_\+indices} & The array of the sorted indices of the items \\
+\hline
+{\em num\+\_\+threads} & The number of threads requested to perform the building \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The built tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tree_8h_a25348c717409522ec53e4f21c0694832}\label{tree_8h_a25348c717409522ec53e4f21c0694832}} 
+\index{tree.h@{tree.h}!tree\_free@{tree\_free}}
+\index{tree\_free@{tree\_free}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_free()}{tree\_free()}}
+{\footnotesize\ttfamily void tree\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{tree }\end{DoxyParamCaption})}
+
+
+
+Free the tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & Pointer to the tree to free \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tree_8h_a71b2c96fedae19c7f5bec9688eec7c67}\label{tree_8h_a71b2c96fedae19c7f5bec9688eec7c67}} 
+\index{tree.h@{tree.h}!tree\_get\_nodes@{tree\_get\_nodes}}
+\index{tree\_get\_nodes@{tree\_get\_nodes}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_get\_nodes()}{tree\_get\_nodes()}}
+{\footnotesize\ttfamily void tree\+\_\+get\+\_\+nodes (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}}]{tree,  }\item[{\mbox{\hyperlink{tree_8h_structTreeNodeToSend}{Tree\+Node\+To\+Send}} $\ast$$\ast$}]{nodes }\end{DoxyParamCaption})}
+
+
+
+Inserts into the vector nodes the nodes to send. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & The trees from which to get the nodes \\
+\hline
+{\em nodes} & The vector in which the nodes are put \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tree_8h_a2ff2d70075a8c8329e65da4804f9d4ec}\label{tree_8h_a2ff2d70075a8c8329e65da4804f9d4ec}} 
+\index{tree.h@{tree.h}!tree\_merge@{tree\_merge}}
+\index{tree\_merge@{tree\_merge}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_merge()}{tree\_merge()}}
+{\footnotesize\ttfamily void tree\+\_\+merge (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{dest,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}}]{source }\end{DoxyParamCaption})}
+
+
+
+Merge the trees dest and source and store the result in dest. The source tree is modified. It is a wrapper for. 
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{tree_8h_a36f55832d669d50524de7a92d75abc2c}{tree\+\_\+merge\+\_\+dfs()}}
+\end{DoxySeeAlso}
+
+\begin{DoxyParams}{Parameters}
+{\em dest} & The destination tree \\
+\hline
+{\em source} & The source tree \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tree_8h_a36f55832d669d50524de7a92d75abc2c}\label{tree_8h_a36f55832d669d50524de7a92d75abc2c}} 
+\index{tree.h@{tree.h}!tree\_merge\_dfs@{tree\_merge\_dfs}}
+\index{tree\_merge\_dfs@{tree\_merge\_dfs}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_merge\_dfs()}{tree\_merge\_dfs()}}
+{\footnotesize\ttfamily void tree\+\_\+merge\+\_\+dfs (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} $\ast$}]{dest,  }\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}}]{source,  }\item[{int}]{nd,  }\item[{int}]{ns }\end{DoxyParamCaption})}
+
+
+
+Merge the subtree of dest rooted in node with id nd with the subtree of source rooted in ns and store the result in dest. Also the source tree is modified. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dest} & The destination tree \\
+\hline
+{\em source} & The source tree \\
+\hline
+{\em nd} & Id of the node in the destination tree \\
+\hline
+{\em ns} & Id of the node in the source tree \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tree_8h_acc74d966fcd3df40b668c39e79e300f5}\label{tree_8h_acc74d966fcd3df40b668c39e79e300f5}} 
+\index{tree.h@{tree.h}!tree\_new@{tree\_new}}
+\index{tree\_new@{tree\_new}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_new()}{tree\_new()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}} tree\+\_\+new (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Instantiate a new tree. 
+
+\begin{DoxyReturn}{Returns}
+The new tree 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tree_8h_a7a44d25589da32e69c83c7ab9d60a7bd}\label{tree_8h_a7a44d25589da32e69c83c7ab9d60a7bd}} 
+\index{tree.h@{tree.h}!tree\_node\_free@{tree\_node\_free}}
+\index{tree\_node\_free@{tree\_node\_free}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_node\_free()}{tree\_node\_free()}}
+{\footnotesize\ttfamily void tree\+\_\+node\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}} $\ast$}]{node }\end{DoxyParamCaption})}
+
+
+
+Free a tree node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Pointer to the node to free \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{tree_8h_ae1dae42687bd388d1687f56ab0e1c1b9}\label{tree_8h_ae1dae42687bd388d1687f56ab0e1c1b9}} 
+\index{tree.h@{tree.h}!tree\_node\_new@{tree\_node\_new}}
+\index{tree\_node\_new@{tree\_node\_new}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_node\_new()}{tree\_node\_new()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{tree_8h_structTreeNode}{Tree\+Node}}$\ast$ tree\+\_\+node\+\_\+new (\begin{DoxyParamCaption}\item[{int}]{key,  }\item[{int}]{value,  }\item[{int}]{parent }\end{DoxyParamCaption})}
+
+
+
+Instantiate a new node of the tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & The key of the node \\
+\hline
+{\em value} & The value of the node \\
+\hline
+{\em parent} & The parent of the node in the tree \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the node created 
+\end{DoxyReturn}
+\mbox{\Hypertarget{tree_8h_a22ebe6cd27a0defae8d30430d806d486}\label{tree_8h_a22ebe6cd27a0defae8d30430d806d486}} 
+\index{tree.h@{tree.h}!tree\_print@{tree\_print}}
+\index{tree\_print@{tree\_print}!tree.h@{tree.h}}
+\doxyparagraph{\texorpdfstring{tree\_print()}{tree\_print()}}
+{\footnotesize\ttfamily void tree\+\_\+print (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{tree_8h_a3643d8271f795999b35e164eb42cc2f3}{Tree}}}]{tree }\end{DoxyParamCaption})}
+
+
+
+Print the tree. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em tree} & The tree to print \\
+\hline
+\end{DoxyParams}

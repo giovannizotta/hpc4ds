@@ -1,0 +1,206 @@
+\hypertarget{io_8h}{}\doxysubsection{src/io.h File Reference}
+\label{io_8h}\index{src/io.h@{src/io.h}}
+
+
+Functions that handle the input and output of the program.  
+
+
+{\ttfamily \#include \char`\"{}types.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$mpi.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{io_8h_af69251875be755d830863c83ae93e046}{update\+\_\+supports}} (\mbox{\hyperlink{types_8h_a4085341fa7d79e33ca23e74af22ed85f}{Item}} item, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map)
+\begin{DoxyCompactList}\small\item\em Increase the support of the given item in the map. If the item is not present it is inserted with support 1. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{io_8h_a15ca0d2d79ca19e81f0c4d0fb7606d45}{transaction\+\_\+free}} (\mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$transaction)
+\begin{DoxyCompactList}\small\item\em Free the given transaction and all the items in it. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{io_8h_a5d3b9dff93b7577f774c7730573954c9}{transactions\+\_\+free}} (\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} $\ast$transactions)
+\begin{DoxyCompactList}\small\item\em Free all the transaction in the list and the list itself. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{io_8h_aeeee19098083f9fc223d20d341e9f94a}{transactions\+\_\+write}} (int rank, \mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} transactions)
+\begin{DoxyCompactList}\small\item\em Write a list of transactions to the file named as the rank of the process. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{io_8h_af876e5761b69e486e32b274a6347e91c}{item\+\_\+parse}} (int rank, int i, char $\ast$chunk, int chunk\+\_\+size, \mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$transaction, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map)
+\begin{DoxyCompactList}\small\item\em Parse an item from the string chunk, starting from position i up to the first space, newline or \textquotesingle{}\textbackslash{}0\textquotesingle{}. The item is added to the transaction and the corresponding support is increased. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{io_8h_abd1cbb4c91b9037b50c6ff89031fd87b}{transaction\+\_\+parse}} (int rank, int i, char $\ast$chunk, int chunk\+\_\+size, \mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} $\ast$transactions, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map)
+\begin{DoxyCompactList}\small\item\em Parse an transaction from the string chunk, starting from position i up to the first newline or \textquotesingle{}\textbackslash{}0\textquotesingle{}. The transaction is added to the list of transactions. The support of the items in the transaction is increased as they get read. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{io_8h_a5944ffe6aef2ae0fdf745fa412954c9b}{read\+\_\+chunk}} (char $\ast$filename, int rank, int world\+\_\+size, char $\ast$$\ast$chunk, int $\ast$my\+\_\+size, int $\ast$read\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Read a chunk of the given file. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{io_8h_af152faa305584e0cbf9c4369114b5178}{transactions\+\_\+read}} (\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} $\ast$transactions, char $\ast$filename, int rank, int world\+\_\+size, \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$support\+\_\+map)
+\begin{DoxyCompactList}\small\item\em Read a list of transactions from the portion of file assigned to the current process. The support of the items read is increased in the support\+\_\+map. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Functions that handle the input and output of the program. 
+
+
+
+\doxysubsubsection{Function Documentation}
+\mbox{\Hypertarget{io_8h_af876e5761b69e486e32b274a6347e91c}\label{io_8h_af876e5761b69e486e32b274a6347e91c}} 
+\index{io.h@{io.h}!item\_parse@{item\_parse}}
+\index{item\_parse@{item\_parse}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{item\_parse()}{item\_parse()}}
+{\footnotesize\ttfamily int item\+\_\+parse (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{i,  }\item[{char $\ast$}]{chunk,  }\item[{int}]{chunk\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$}]{transaction,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map }\end{DoxyParamCaption})}
+
+
+
+Parse an item from the string chunk, starting from position i up to the first space, newline or \textquotesingle{}\textbackslash{}0\textquotesingle{}. The item is added to the transaction and the corresponding support is increased. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & Rank of the current process \\
+\hline
+{\em i} & Start position from where to start parsing \\
+\hline
+{\em chunk} & String containing the item to parse \\
+\hline
+{\em chunk\+\_\+size} & Size of the chunk \\
+\hline
+{\em transaction} & The transaction where to add the item \\
+\hline
+{\em support\+\_\+map} & The map from items to respective support \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The index where the parsed item ends (excluded) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{io_8h_a5944ffe6aef2ae0fdf745fa412954c9b}\label{io_8h_a5944ffe6aef2ae0fdf745fa412954c9b}} 
+\index{io.h@{io.h}!read\_chunk@{read\_chunk}}
+\index{read\_chunk@{read\_chunk}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{read\_chunk()}{read\_chunk()}}
+{\footnotesize\ttfamily void read\+\_\+chunk (\begin{DoxyParamCaption}\item[{char $\ast$}]{filename,  }\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{char $\ast$$\ast$}]{chunk,  }\item[{int $\ast$}]{my\+\_\+size,  }\item[{int $\ast$}]{read\+\_\+size }\end{DoxyParamCaption})}
+
+
+
+Read a chunk of the given file. 
+
+Read up to 2 $\ast$ my\+\_\+size, since we do not know where transactions start exactly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & File where transactions are stored \\
+\hline
+{\em rank} & Rank of the current process \\
+\hline
+{\em world\+\_\+size} & Number of active processes \\
+\hline
+{\em chunk} & String where to store the read bytes \\
+\hline
+{\em my\+\_\+size} & Number of bytes each process is assigned to \\
+\hline
+{\em read\+\_\+size} & Number of bytes the current process has read \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{io_8h_a15ca0d2d79ca19e81f0c4d0fb7606d45}\label{io_8h_a15ca0d2d79ca19e81f0c4d0fb7606d45}} 
+\index{io.h@{io.h}!transaction\_free@{transaction\_free}}
+\index{transaction\_free@{transaction\_free}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{transaction\_free()}{transaction\_free()}}
+{\footnotesize\ttfamily void transaction\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$}]{transaction }\end{DoxyParamCaption})}
+
+
+
+Free the given transaction and all the items in it. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em transaction} & The transaction to free \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{io_8h_abd1cbb4c91b9037b50c6ff89031fd87b}\label{io_8h_abd1cbb4c91b9037b50c6ff89031fd87b}} 
+\index{io.h@{io.h}!transaction\_parse@{transaction\_parse}}
+\index{transaction\_parse@{transaction\_parse}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{transaction\_parse()}{transaction\_parse()}}
+{\footnotesize\ttfamily int transaction\+\_\+parse (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{int}]{i,  }\item[{char $\ast$}]{chunk,  }\item[{int}]{chunk\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} $\ast$}]{transactions,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map }\end{DoxyParamCaption})}
+
+
+
+Parse an transaction from the string chunk, starting from position i up to the first newline or \textquotesingle{}\textbackslash{}0\textquotesingle{}. The transaction is added to the list of transactions. The support of the items in the transaction is increased as they get read. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & Rank of the current process \\
+\hline
+{\em i} & Start position from where to start parsing \\
+\hline
+{\em chunk} & String containing the item to parse \\
+\hline
+{\em chunk\+\_\+size} & Size of the chunk \\
+\hline
+{\em transactions} & The list of transactions where to add the transaction \\
+\hline
+{\em support\+\_\+map} & The map from items to respective support \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The index where the parsed transaction ends (excluded) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{io_8h_a5d3b9dff93b7577f774c7730573954c9}\label{io_8h_a5d3b9dff93b7577f774c7730573954c9}} 
+\index{io.h@{io.h}!transactions\_free@{transactions\_free}}
+\index{transactions\_free@{transactions\_free}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{transactions\_free()}{transactions\_free()}}
+{\footnotesize\ttfamily void transactions\+\_\+free (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} $\ast$}]{transactions }\end{DoxyParamCaption})}
+
+
+
+Free all the transaction in the list and the list itself. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em transactions} & The list of transactions to free \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{io_8h_af152faa305584e0cbf9c4369114b5178}\label{io_8h_af152faa305584e0cbf9c4369114b5178}} 
+\index{io.h@{io.h}!transactions\_read@{transactions\_read}}
+\index{transactions\_read@{transactions\_read}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{transactions\_read()}{transactions\_read()}}
+{\footnotesize\ttfamily void transactions\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}} $\ast$}]{transactions,  }\item[{char $\ast$}]{filename,  }\item[{int}]{rank,  }\item[{int}]{world\+\_\+size,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map }\end{DoxyParamCaption})}
+
+
+
+Read a list of transactions from the portion of file assigned to the current process. The support of the items read is increased in the support\+\_\+map. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em transactions} & List of transactions where to store the data \\
+\hline
+{\em filename} & Name of the file from which to read \\
+\hline
+{\em rank} & Rank of the current process \\
+\hline
+{\em world\+\_\+size} & Number of active processes \\
+\hline
+{\em support\+\_\+map} & A map from items to the respective support \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{io_8h_aeeee19098083f9fc223d20d341e9f94a}\label{io_8h_aeeee19098083f9fc223d20d341e9f94a}} 
+\index{io.h@{io.h}!transactions\_write@{transactions\_write}}
+\index{transactions\_write@{transactions\_write}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{transactions\_write()}{transactions\_write()}}
+{\footnotesize\ttfamily void transactions\+\_\+write (\begin{DoxyParamCaption}\item[{int}]{rank,  }\item[{\mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}}}]{transactions }\end{DoxyParamCaption})}
+
+
+
+Write a list of transactions to the file named as the rank of the process. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rank} & Rank of the current process \\
+\hline
+{\em transactions} & List of transactions to write \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{io_8h_af69251875be755d830863c83ae93e046}\label{io_8h_af69251875be755d830863c83ae93e046}} 
+\index{io.h@{io.h}!update\_supports@{update\_supports}}
+\index{update\_supports@{update\_supports}!io.h@{io.h}}
+\doxyparagraph{\texorpdfstring{update\_supports()}{update\_supports()}}
+{\footnotesize\ttfamily void update\+\_\+supports (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{types_8h_a4085341fa7d79e33ca23e74af22ed85f}{Item}}}]{item,  }\item[{\mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}} $\ast$}]{support\+\_\+map }\end{DoxyParamCaption})}
+
+
+
+Increase the support of the given item in the map. If the item is not present it is inserted with support 1. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em item} & Item of wich to increase the support \\
+\hline
+{\em support\+\_\+map} & A map from items to the respective support \\
+\hline
+\end{DoxyParams}

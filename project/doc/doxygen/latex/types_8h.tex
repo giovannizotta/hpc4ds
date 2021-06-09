@@ -1,0 +1,81 @@
+\hypertarget{types_8h}{}\doxysubsection{src/types.h File Reference}
+\label{types_8h}\index{src/types.h@{src/types.h}}
+
+
+Definition of datatypes used by the program.  
+
+
+{\ttfamily \#include \char`\"{}cvector/cvector.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}hashmap/hashmap.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef map\+\_\+t \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}}
+\begin{DoxyCompactList}\small\item\em Map from Item to the corresponding support. \end{DoxyCompactList}\item 
+typedef map\+\_\+t \mbox{\hyperlink{types_8h_aed4c68b1f70ee57237267583467b88c6}{Index\+Map}}
+\begin{DoxyCompactList}\small\item\em Map from Item to its id. \end{DoxyCompactList}\item 
+typedef uint8\+\_\+t $\ast$ \mbox{\hyperlink{types_8h_a4085341fa7d79e33ca23e74af22ed85f}{Item}}
+\begin{DoxyCompactList}\small\item\em Item of a transaction. \end{DoxyCompactList}\item 
+typedef \mbox{\hyperlink{types_8h_a4085341fa7d79e33ca23e74af22ed85f}{Item}} $\ast$ \mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}}
+\begin{DoxyCompactList}\small\item\em Transaction of items. \end{DoxyCompactList}\item 
+typedef \mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}} $\ast$ \mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}}
+\begin{DoxyCompactList}\small\item\em List of transactions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Definition of datatypes used by the program. 
+
+
+
+\doxysubsubsection{Typedef Documentation}
+\mbox{\Hypertarget{types_8h_aed4c68b1f70ee57237267583467b88c6}\label{types_8h_aed4c68b1f70ee57237267583467b88c6}} 
+\index{types.h@{types.h}!IndexMap@{IndexMap}}
+\index{IndexMap@{IndexMap}!types.h@{types.h}}
+\doxyparagraph{\texorpdfstring{IndexMap}{IndexMap}}
+{\footnotesize\ttfamily typedef map\+\_\+t \mbox{\hyperlink{types_8h_aed4c68b1f70ee57237267583467b88c6}{Index\+Map}}}
+
+
+
+Map from Item to its id. 
+
+\mbox{\Hypertarget{types_8h_a4085341fa7d79e33ca23e74af22ed85f}\label{types_8h_a4085341fa7d79e33ca23e74af22ed85f}} 
+\index{types.h@{types.h}!Item@{Item}}
+\index{Item@{Item}!types.h@{types.h}}
+\doxyparagraph{\texorpdfstring{Item}{Item}}
+{\footnotesize\ttfamily typedef uint8\+\_\+t$\ast$ \mbox{\hyperlink{types_8h_a4085341fa7d79e33ca23e74af22ed85f}{Item}}}
+
+
+
+Item of a transaction. 
+
+\mbox{\Hypertarget{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}\label{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}} 
+\index{types.h@{types.h}!SupportMap@{SupportMap}}
+\index{SupportMap@{SupportMap}!types.h@{types.h}}
+\doxyparagraph{\texorpdfstring{SupportMap}{SupportMap}}
+{\footnotesize\ttfamily typedef map\+\_\+t \mbox{\hyperlink{types_8h_a39f2421f9e3cb314d22e5c1963b257eb}{Support\+Map}}}
+
+
+
+Map from Item to the corresponding support. 
+
+\mbox{\Hypertarget{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}\label{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}} 
+\index{types.h@{types.h}!Transaction@{Transaction}}
+\index{Transaction@{Transaction}!types.h@{types.h}}
+\doxyparagraph{\texorpdfstring{Transaction}{Transaction}}
+{\footnotesize\ttfamily typedef \mbox{\hyperlink{types_8h_a4085341fa7d79e33ca23e74af22ed85f}{Item}}$\ast$ \mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}}}
+
+
+
+Transaction of items. 
+
+\mbox{\Hypertarget{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}\label{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}} 
+\index{types.h@{types.h}!TransactionsList@{TransactionsList}}
+\index{TransactionsList@{TransactionsList}!types.h@{types.h}}
+\doxyparagraph{\texorpdfstring{TransactionsList}{TransactionsList}}
+{\footnotesize\ttfamily typedef \mbox{\hyperlink{types_8h_ac9eae9c867f265275ce1c007a6b82a0b}{Transaction}}$\ast$ \mbox{\hyperlink{types_8h_abcd6e5e0af9f16845b81cd207cfb907b}{Transactions\+List}}}
+
+
+
+List of transactions. 
+

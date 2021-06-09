@@ -8,9 +8,9 @@
 /**
  * @brief Instantiate a new node of the tree.
  *
- * @param[in] key The key of the node
- * @param[in] value The value of the node
- * @param[in] parent The parent of the node in the tree
+ * @param key The key of the node
+ * @param value The value of the node
+ * @param parent The parent of the node in the tree
  * @return Pointer to the node created
  */
 TreeNode *tree_node_new(int key, int value, int parent) {
@@ -114,11 +114,14 @@ void tree_add_subtree(Tree *dest, Tree source, int nd, int ns) {
 }
 
 /**
- * @brief Merge the trees dest and source and store the result in dest.
- * The source tree is modified.
+ * @brief Merge the subtree of dest rooted in node with id nd
+ * with the subtree of source rooted in ns and store the result in dest.
+ * Also the source tree is modified.
  *
  * @param dest The destination tree
  * @param source The source tree
+ * @param nd Id of the node in the destination tree
+ * @param ns Id of the node in the source tree
  */
 void tree_merge_dfs(Tree *dest, Tree source, int nd, int ns) {
     int i;
@@ -255,15 +258,7 @@ Tree tree_build_from_transaction(int rank, int world_size,
  * @brief Build a tree given a list of transactions
  *
  * First, we build the trees for the single transactions.
- * Then, we merge them in a binary-tree-like fashion, as
- * shown below
- * 0
- * |   \
- * 0       4
- * | \     | \
- * 0   2   4   6
- * |\  |\  |\  |\
- * 0 1 2 3 4 5 6 7
+ * Then, we merge them in a binary-tree-like fashion.
  *
  * @param rank The rank of the process
  * @param world_size The number of processes in the world

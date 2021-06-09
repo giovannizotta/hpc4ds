@@ -19,7 +19,7 @@ void update_supports(Item item, SupportMap *support_map) {
 }
 
 /**
- * @brief Free the fiven transaction and all the items in it
+ * @brief Free the given transaction and all the items in it
  *
  * @param transaction The transaction to free
  */
