@@ -1,0 +1,202 @@
+\hypertarget{sort_8h}{}\doxysubsection{src/sort.h File Reference}
+\label{sort_8h}\index{src/sort.h@{src/sort.h}}
+
+
+Functions that implement parallel Quick\+Sort with Open\+MP.  
+
+
+{\ttfamily \#include \char`\"{}hashmap/hashmap.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}types.\+h\char`\"{}}\newline
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{sort_8h_a06b5367a33da458e4539ee6e78dc351a}{I\+N\+S\+E\+R\+T\+I\+O\+N\+\_\+\+S\+O\+R\+T\+\_\+\+T\+H\+R\+E\+SH}}~100
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{sort_8h_a79ceff6dc3767f99d868b1f6da9e716c}{insertion\+\_\+sort}} (hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices, int start, int end)
+\begin{DoxyCompactList}\small\item\em Sort the indices contained in the array sorted\+\_\+indices from start to end using insertion sort. The indices are sorted according to the corresponding element in items\+\_\+count. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sort_8h_ae9db7bac5e1dd99e99d92e6c916aeec4}{swap}} (int $\ast$a, int i, int j)
+\begin{DoxyCompactList}\small\item\em Swap elements in position i and j in the array a. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{sort_8h_a814f3ae330ab0587e8265e6ea753714d}{pivot}} (hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices, int start, int end, int m)
+\begin{DoxyCompactList}\small\item\em Perform the pivot operation of the quicksort algorithm on the sub-\/array sorted\+\_\+indices from start to end (included). \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{sort_8h_a0626ef1ab06d837a3a368e7c38075c9d}{choose\+\_\+pivot}} (hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices, int start, int end)
+\begin{DoxyCompactList}\small\item\em Choose a pivot according to the Median-\/of-\/three heuristic. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sort_8h_a78c21e074dbf65b06f3f23c204d8a777}{parallel\+\_\+quick\+\_\+sort}} (hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices, int start, int end, int $\ast$$\ast$stack, int $\ast$num\+\_\+busy\+\_\+threads, int $\ast$num\+\_\+threads)
+\begin{DoxyCompactList}\small\item\em Parallel version of the Quick\+Sort algoritm. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{sort_8h_a3227410dcbb37a4f2dd966324c9e570b}{sort}} (hashmap\+\_\+element $\ast$items\+\_\+count, int num\+\_\+items, int $\ast$sorted\+\_\+indices, int start, int end, int num\+\_\+threads)
+\begin{DoxyCompactList}\small\item\em Put in the array sorted\+\_\+indices the indices of the elements of the array items\+\_\+count from position start to end, after they are sorted according to their value field. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Detailed Description}
+Functions that implement parallel Quick\+Sort with Open\+MP. 
+
+
+
+\doxysubsubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{sort_8h_a06b5367a33da458e4539ee6e78dc351a}\label{sort_8h_a06b5367a33da458e4539ee6e78dc351a}} 
+\index{sort.h@{sort.h}!INSERTION\_SORT\_THRESH@{INSERTION\_SORT\_THRESH}}
+\index{INSERTION\_SORT\_THRESH@{INSERTION\_SORT\_THRESH}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{INSERTION\_SORT\_THRESH}{INSERTION\_SORT\_THRESH}}
+{\footnotesize\ttfamily \#define I\+N\+S\+E\+R\+T\+I\+O\+N\+\_\+\+S\+O\+R\+T\+\_\+\+T\+H\+R\+E\+SH~100}
+
+
+
+\doxysubsubsection{Function Documentation}
+\mbox{\Hypertarget{sort_8h_a0626ef1ab06d837a3a368e7c38075c9d}\label{sort_8h_a0626ef1ab06d837a3a368e7c38075c9d}} 
+\index{sort.h@{sort.h}!choose\_pivot@{choose\_pivot}}
+\index{choose\_pivot@{choose\_pivot}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{choose\_pivot()}{choose\_pivot()}}
+{\footnotesize\ttfamily int choose\+\_\+pivot (\begin{DoxyParamCaption}\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end }\end{DoxyParamCaption})}
+
+
+
+Choose a pivot according to the Median-\/of-\/three heuristic. 
+
+The pivot is chosen as the median of the first, middle and last element of the sub-\/array sorted\+\_\+indices from start to end, according to the corresponding value in items\+\_\+count. These three indices are swapped, so that the median at the end is in position start.
+
+
+\begin{DoxyParams}{Parameters}
+{\em items\+\_\+count} & array of key-\/value pairs \\
+\hline
+{\em num\+\_\+items} & length of items\+\_\+count \\
+\hline
+{\em sorted\+\_\+indices} & array of indices that are going to be sorted \\
+\hline
+{\em start} & start position of the sub-\/array to sort \\
+\hline
+{\em end} & end position of the sub-\/array to sort \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the position of the pivot 
+\end{DoxyReturn}
+\mbox{\Hypertarget{sort_8h_a79ceff6dc3767f99d868b1f6da9e716c}\label{sort_8h_a79ceff6dc3767f99d868b1f6da9e716c}} 
+\index{sort.h@{sort.h}!insertion\_sort@{insertion\_sort}}
+\index{insertion\_sort@{insertion\_sort}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{insertion\_sort()}{insertion\_sort()}}
+{\footnotesize\ttfamily void insertion\+\_\+sort (\begin{DoxyParamCaption}\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end }\end{DoxyParamCaption})}
+
+
+
+Sort the indices contained in the array sorted\+\_\+indices from start to end using insertion sort. The indices are sorted according to the corresponding element in items\+\_\+count. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em items\+\_\+count} & array of key-\/value pairs \\
+\hline
+{\em num\+\_\+items} & length of items\+\_\+count \\
+\hline
+{\em sorted\+\_\+indices} & array of indices that are going to be sorted \\
+\hline
+{\em start} & start position of the sub-\/array to sort \\
+\hline
+{\em end} & end position of the sub-\/array to sort \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sort_8h_a78c21e074dbf65b06f3f23c204d8a777}\label{sort_8h_a78c21e074dbf65b06f3f23c204d8a777}} 
+\index{sort.h@{sort.h}!parallel\_quick\_sort@{parallel\_quick\_sort}}
+\index{parallel\_quick\_sort@{parallel\_quick\_sort}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{parallel\_quick\_sort()}{parallel\_quick\_sort()}}
+{\footnotesize\ttfamily void parallel\+\_\+quick\+\_\+sort (\begin{DoxyParamCaption}\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end,  }\item[{int $\ast$$\ast$}]{stack,  }\item[{int $\ast$}]{num\+\_\+busy\+\_\+threads,  }\item[{int $\ast$}]{num\+\_\+threads }\end{DoxyParamCaption})}
+
+
+
+Parallel version of the Quick\+Sort algoritm. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em items\+\_\+count} & array of key-\/value pairs \\
+\hline
+{\em num\+\_\+items} & length of items\+\_\+count \\
+\hline
+{\em sorted\+\_\+indices} & array of indices that are going to be sorted \\
+\hline
+{\em start} & start position of the sub-\/array to sort \\
+\hline
+{\em end} & end position of the sub-\/array to sort \\
+\hline
+{\em stack} & stack containing the jobs that need to be done by free threads \\
+\hline
+{\em num\+\_\+busy\+\_\+threads} & Number of currently busy threads \\
+\hline
+{\em num\+\_\+threads} & Number of threads that perform the sorting \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sort_8h_a814f3ae330ab0587e8265e6ea753714d}\label{sort_8h_a814f3ae330ab0587e8265e6ea753714d}} 
+\index{sort.h@{sort.h}!pivot@{pivot}}
+\index{pivot@{pivot}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{pivot()}{pivot()}}
+{\footnotesize\ttfamily int pivot (\begin{DoxyParamCaption}\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end,  }\item[{int}]{m }\end{DoxyParamCaption})}
+
+
+
+Perform the pivot operation of the quicksort algorithm on the sub-\/array sorted\+\_\+indices from start to end (included). 
+
+The indices which value in items\+\_\+count is smaller than the value of the pivot are moved to the left of the pivot, the ones with a value greater or equal are moved to its right.
+
+
+\begin{DoxyParams}{Parameters}
+{\em items\+\_\+count} & array of key-\/value pairs \\
+\hline
+{\em num\+\_\+items} & length of items\+\_\+count \\
+\hline
+{\em sorted\+\_\+indices} & array of indices that are going to be sorted \\
+\hline
+{\em start} & start position of the sub-\/array to sort \\
+\hline
+{\em end} & end position of the sub-\/array to sort \\
+\hline
+{\em m} & position of the pivot \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the new position of the pivot 
+\end{DoxyReturn}
+\mbox{\Hypertarget{sort_8h_a3227410dcbb37a4f2dd966324c9e570b}\label{sort_8h_a3227410dcbb37a4f2dd966324c9e570b}} 
+\index{sort.h@{sort.h}!sort@{sort}}
+\index{sort@{sort}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{sort()}{sort()}}
+{\footnotesize\ttfamily void sort (\begin{DoxyParamCaption}\item[{hashmap\+\_\+element $\ast$}]{items\+\_\+count,  }\item[{int}]{num\+\_\+items,  }\item[{int $\ast$}]{sorted\+\_\+indices,  }\item[{int}]{start,  }\item[{int}]{end,  }\item[{int}]{num\+\_\+threads }\end{DoxyParamCaption})}
+
+
+
+Put in the array sorted\+\_\+indices the indices of the elements of the array items\+\_\+count from position start to end, after they are sorted according to their value field. 
+
+The array items\+\_\+count is not modified. The algorithm implement a parallel version of Quick\+Sort, described in the paper Süß M, Leopold C. A user’s experience with parallel sorting and Open\+MP. In\+Proceedings of the Sixth European Workshop on Open\+M\+P-\/\+E\+W\+O\+M\+P’04 2004 Oct 18 (pp. 23-\/38).
+
+
+\begin{DoxyParams}{Parameters}
+{\em items\+\_\+count} & array of key-\/value pairs \\
+\hline
+{\em num\+\_\+items} & length of items\+\_\+count \\
+\hline
+{\em sorted\+\_\+indices} & array of indices that are going to be sorted \\
+\hline
+{\em start} & start position of the sub-\/array to sort \\
+\hline
+{\em end} & end position of the sub-\/array to sort \\
+\hline
+{\em num\+\_\+threads} & Number of threads that perform the sorting \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{sort_8h_ae9db7bac5e1dd99e99d92e6c916aeec4}\label{sort_8h_ae9db7bac5e1dd99e99d92e6c916aeec4}} 
+\index{sort.h@{sort.h}!swap@{swap}}
+\index{swap@{swap}!sort.h@{sort.h}}
+\doxyparagraph{\texorpdfstring{swap()}{swap()}}
+{\footnotesize\ttfamily void swap (\begin{DoxyParamCaption}\item[{int $\ast$}]{a,  }\item[{int}]{i,  }\item[{int}]{j }\end{DoxyParamCaption})}
+
+
+
+Swap elements in position i and j in the array a. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & array where to swap the elements \\
+\hline
+{\em i} & position of the first element to swap \\
+\hline
+{\em j} & position of the second element to swap \\
+\hline
+\end{DoxyParams}

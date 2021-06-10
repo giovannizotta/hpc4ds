@@ -7,6 +7,17 @@
 
 #define INSERTION_SORT_THRESH 100
 
+/**
+ * @brief Sort the indices contained in the array sorted_indices
+ * from start to end using insertion sort. The indices are sorted
+ * according to the corresponding element in items_count.
+ *
+ * @param items_count array of key-value pairs
+ * @param num_items length of items_count
+ * @param sorted_indices array of indices that are going to be sorted
+ * @param start start position of the sub-array to sort
+ * @param end end position of the sub-array to sort
+ */
 void insertion_sort(hashmap_element *items_count, int num_items,
                     int *sorted_indices, int start, int end) {
     int i, j, i_val, j_val;
@@ -28,12 +39,35 @@ void insertion_sort(hashmap_element *items_count, int num_items,
     }
 }
 
+/**
+ * @brief Swap elements in position i and j in the array a
+ *
+ * @param a array where to swap the elements
+ * @param i position of the first element to swap
+ * @param j position of the second element to swap
+ */
 void swap(int *a, int i, int j) {
     int tmp = a[i];
     a[i] = a[j];
     a[j] = tmp;
 }
 
+/**
+ * @brief Perform the pivot operation of the quicksort algorithm on
+ * the sub-array sorted_indices from start to end (included).
+ *
+ * The indices which value in items_count is smaller than the value of
+ * the pivot are moved to the left of the pivot,
+ * the ones with a value greater or equal are moved to its right.
+ *
+ * @param items_count array of key-value pairs
+ * @param num_items length of items_count
+ * @param sorted_indices array of indices that are going to be sorted
+ * @param start start position of the sub-array to sort
+ * @param end end position of the sub-array to sort
+ * @param m position of the pivot
+ * @return the new position of the pivot
+ */
 int pivot(hashmap_element *items_count, int num_items, int *sorted_indices,
           int start, int end, int m) {
     swap(sorted_indices, start, m);
@@ -52,44 +86,58 @@ int pivot(hashmap_element *items_count, int num_items, int *sorted_indices,
     return j;
 }
 
-int choose_pivot(hashmap_element *items_count, int num_items, int *ind,
-                 int start, int end) {
-    // int m = b(lo + hi )/2c
-    // if A[lo] > A[hi ] then
-    // swap (A, lo, hi )
-    // % Sposta il massimo in ultima posizione
-    // if A[m] > A[hi ] then
-    // swap (A, m, hi ) % Sposta il massimo in ultima posizione
-    // if A[m] > A[lo] then
-    // swap (A, m, lo) % Sposta il mediano in prima posizione
-    // Item pivot = A[lo]
-    // [...]
+/**
+ * @brief Chooses a pivot according to the Median-of-three heuristic.
+ *
+ * The pivot is chosen as the median of the first, middle and last element of
+ * the sub-array sorted_indices from start to end, according to the
+ * corresponding value in items_count. These three indices are swapped, so that
+ * the median at the end is in position start.
+ *
+ *
+ * @param items_count array of key-value pairs
+ * @param num_items length of items_count
+ * @param sorted_indices array of indices that are going to be sorted
+ * @param start start position of the sub-array to sort
+ * @param end end position of the sub-array to sort
+ * @return the position of the pivot
+ */
+int choose_pivot(hashmap_element *items_count, int num_items,
+                 int *sorted_indices, int start, int end) {
     int m = (start + end) / 2;
-    // int l[3];
     int v[3];
-    // l[0] = items_count[ind[start]].key_length;
-    // l[1] = items_count[ind[m]].key_length;
-    // l[2] = items_count[ind[end]].key_length;
-
-    v[0] = items_count[ind[start]].value;
-    v[1] = items_count[ind[m]].value;
-    v[2] = items_count[ind[end]].value;
+    v[0] = items_count[sorted_indices[start]].value;
+    v[1] = items_count[sorted_indices[m]].value;
+    v[2] = items_count[sorted_indices[end]].value;
 
     if (v[0] > v[2]) {
         swap(v, 0, 2);
-        swap(ind, start, end);
+        swap(sorted_indices, start, end);
     }
     if (v[1] > v[2]) {
         swap(v, 1, 2);
-        swap(ind, m, end);
+        swap(sorted_indices, m, end);
     }
     if (v[1] > v[0]) {
         swap(v, 1, 0);
-        swap(ind, m, start);
+        swap(sorted_indices, m, start);
     }
     return start;
 }
 
+/**
+ * @brief Subroutine that performs a parallel version of the QuickSort
+ * algoritm.
+ *
+ * @param items_count array of key-value pairs
+ * @param num_items length of items_count
+ * @param sorted_indices array of indices that are going to be sorted
+ * @param start start position of the sub-array to sort
+ * @param end end position of the sub-array to sort
+ * @param stack stack containing the jobs that need to be done by free threads
+ * @param num_busy_threads Number of currently busy threads
+ * @param num_threads Number of threads that perform the sorting
+ */
 void parallel_quick_sort(hashmap_element *items_count, int num_items,
                          int *sorted_indices, int start, int end,
                          cvector_vector_type(int) * stack,
@@ -135,10 +183,23 @@ void parallel_quick_sort(hashmap_element *items_count, int num_items,
 }
 
 /**
- * Source: doi=10.1.1.100.809
- * (https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.100.809&rep=rep1&type=pdf#page=31)
+ * @brief Puts in the array sorted_indices the indices of the elements of
+ * the array items_count from position start to end, after they are sorted
+ * according to their value field.
+ *
+ * The array items_count is not modified. The algorithm implement a
+ * parallel version of Quicksort, described in the paper
+ * Süß M, Leopold C. A user’s experience with parallel sorting and OpenMP.
+ * InProceedings of the Sixth European Workshop on OpenMP-EWOMP’04 2004 Oct 18
+ * (pp. 23-38).
+ *
+ * @param items_count array of key-value pairs
+ * @param num_items length of items_count
+ * @param sorted_indices array of indices that are going to be sorted
+ * @param start start position of the sub-array to sort
+ * @param end end position of the sub-array to sort
+ * @param num_threads Number of threads that perform the sorting
  */
-
 void sort(hashmap_element *items_count, int num_items, int *sorted_indices,
           int start, int end, int num_threads) {
 
@@ -151,7 +212,7 @@ void sort(hashmap_element *items_count, int num_items, int *sorted_indices,
            num_threads, num_busy_threads) private(i) num_threads(num_threads)
     {
 #pragma omp for
-        for (i = 0; i < num_items; i++) {
+        for (i = start; i <= end; i++) {
             sorted_indices[i] = i;
         }
         if (omp_get_thread_num() == 0) {
