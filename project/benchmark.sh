@@ -70,7 +70,7 @@ cycle_processes () {
     N_THREAD=$2
     for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
     do
-        for N_PROC in 4 8 32 64
+        for N_PROC in 1 4 8 32 64
         do
             submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "${N_PROC}" "${N_THREAD}"
         done
@@ -82,7 +82,7 @@ cycle_threads () {
     N_PROC=$2
     for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
     do
-        for N_THREAD in 2 4 6 12 16
+        for N_THREAD in 1 2 4 6 12 16
         do
             submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "${N_PROC}" "${N_THREAD}"
         done
