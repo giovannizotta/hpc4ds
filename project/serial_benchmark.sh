@@ -75,4 +75,5 @@ cycle_main_file () {
     done
 }
 
-cycle_files "0.0001"
+cycle_files_dir "0.0001"
+cycle_main_file "0.0001"
