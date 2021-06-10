@@ -56,11 +56,10 @@ EOF
 cycle_support () {
     N_PROC=$1
     N_THREAD=$2
-    for ITER in 1 2 3 4 5
+    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
     do
-        for MIN_SUPPORT in 0.0001 0.0002
+        for MIN_SUPPORT in 0.0002
         do
-            echo ${MAIN_FILE}
             submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "${N_PROC}" "${N_THREAD}"
         done
     done
@@ -69,9 +68,9 @@ cycle_support () {
 cycle_processes () {
     MIN_SUPPORT=$1
     N_THREAD=$2
-    for ITER in 1 2 3 4 5
+    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
     do
-        for N_PROC in 4 16 64
+        for N_PROC in 4 8 32 64
         do
             submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "${N_PROC}" "${N_THREAD}"
         done
@@ -81,9 +80,9 @@ cycle_processes () {
 cycle_threads () {
     MIN_SUPPORT=$1
     N_PROC=$2
-    for ITER in 1 2 3 4 5
+    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
     do
-        for N_THREAD in 4 8 16
+        for N_THREAD in 2 4 6 12 16
         do
             submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "${N_PROC}" "${N_THREAD}"
         done
@@ -94,7 +93,7 @@ cycle_files () {
     MIN_SUPPORT=$1
     N_PROC=$2
     N_THREAD=$3
-    for ITER in 1 2 3 4 5
+    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
     do
         for D in ${DATA_DIR}/*
         do
@@ -106,12 +105,12 @@ cycle_files () {
     done
 }
 
-cycle_support "1" "1"
-cycle_support "16" "8"
+# cycle_support "1" "1"
+# cycle_support "16" "8"
 
 cycle_processes "0.0001" "8"
 
 cycle_threads "0.0001" "16"
 
-cycle_files "0.0001" "1" "1"
+# cycle_files "0.0001" "1" "1"
 cycle_files "0.0001" "16" "8"
