@@ -40,7 +40,7 @@ do
 cat > hpc4ds/project/sub_scripts/sub.sh <<EOF
 #PBS -l select=${N_NODES}:ncpus=${N_CPU}:mem=${RAM}gb:net_type=IB
 
-#PBS -l walltime=1:50:30 q
+#PBS -l walltime=1:50:30
 
 #PBS -q short_cpuQ
 
