@@ -61,7 +61,7 @@ def aggregate_rank(dataset):
         .reset_index()
 
 
-def aggregate_phase(dataset):
+def aggregate_step(dataset):
     return dataset\
         .groupby(['timestamp', 'support', 'processes', 'threads', 'density', 'msg']) \
         .agg({'time': np.max}) \
@@ -80,6 +80,7 @@ def load_config(dataset, config, excluded_param):
 
 
 def get_plot_title(excluded_param, config, additional_param=''):
+
     params = ', '.join(f"{param.name}={param.default}" for param in config
                        if param != excluded_param)
     return f"""Time with different {excluded_param.long} {additional_param}
@@ -99,7 +100,7 @@ def plot_vary_param(dataset, param, out, config=DEFAULT_PARAMS):
               title=get_plot_title(param, config))
 
     plt.savefig(os.path.join(
-        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}.png'))
+        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}.pdf'))
 
 
 def plot_count(dataset, out):
@@ -108,10 +109,10 @@ def plot_count(dataset, out):
         .plot(kind='bar',
               title="Number of runs per configuration")
     plt.tight_layout()
-    plt.savefig(os.path.join(out, f'count.png'))
+    plt.savefig(os.path.join(out, f'count.pdf'))
 
 
-def plot_vary_param_per_phase(dataset, param, out, config=DEFAULT_PARAMS):
+def plot_vary_param_per_step(dataset, param, out, config=DEFAULT_PARAMS):
     load_config(dataset, config, excluded_param=param) \
         .groupby([param.name, 'msg']) \
         .agg({'time': np.mean}) \
@@ -119,23 +120,43 @@ def plot_vary_param_per_phase(dataset, param, out, config=DEFAULT_PARAMS):
         .sort_values(by=[param.name],
                      key=lambda c: pd.to_numeric(c)) \
         .plot(ylabel='seconds',
-              title=get_plot_title(param, config, additional_param='per phase'))
+              title=get_plot_title(param, config, additional_param='per step'))
     plt.tight_layout()
     plt.savefig(os.path.join(
-        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}_phase.png'))
+        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}_step.pdf'))
+
+
+def plot_configurations_time(dataset, out, fix_param):
+    config_params = ['processes', 'threads']
+    params = ', '.join(f"{param.name}={param.default}" for param in DEFAULT_PARAMS
+                       if param.name not in config_params)
+    title = f"""Time with different number of processes and threads
+({params})"""
+
+    dataset_agg = dataset[dataset[fix_param.name] == fix_param.default] \
+        .groupby(config_params)\
+        .agg({'time': np.mean})\
+        .sort_values(by=config_params,
+                     key=lambda c: pd.to_numeric(c))
+
+    ticks = [f"({p},{t})" for p, t in dataset_agg.index.tolist()]
+    ax = dataset_agg.plot(ylabel='seconds', rot=90,
+                          title=title)
+    ax.set_xticks(range(len(ticks)))
+    ax.set_xticklabels(ticks)
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(out, f'config_time.pdf'))
 
 
 if __name__ == '__main__':
     basepath = os.path.dirname(sys.argv[0])
+    out_dir = os.path.join(basepath, OUTPUT_DIR)
+    # aggregate data
     dataset = load_dataset(os.path.join(basepath, RESULTS_DIR))
     dataset_agg_all = aggregate_rank(dataset)
-    dataset_agg_phase = aggregate_phase(dataset)
-    # print(dataset[(dataset['processes'] != '1') & (
-    #     dataset['threads'] != '1')]['time'].max())
-    # print(dataset)
-    # print(dataset[dataset['timestamp']
-    #       == '2021-06-09-12-20-39'])
-    out_dir = os.path.join(basepath, OUTPUT_DIR)
+    dataset_agg_step = aggregate_step(dataset)
+    # plots with 16 proc 8 threads
     plot_count(dataset_agg_all, out_dir)
     plot_vary_param(dataset_agg_all,
                     DEFAULT_PARAMS.processes, out=out_dir)
@@ -144,15 +165,21 @@ if __name__ == '__main__':
     plot_vary_param(dataset_agg_all,
                     DEFAULT_PARAMS.density,   out=out_dir)
 
-    plot_vary_param_per_phase(
-        dataset_agg_phase, DEFAULT_PARAMS.processes, out=out_dir)
-    plot_vary_param_per_phase(
-        dataset_agg_phase, DEFAULT_PARAMS.threads,   out=out_dir)
-    plot_vary_param_per_phase(
-        dataset_agg_phase, DEFAULT_PARAMS.density,   out=out_dir)
+    # plots with 16 proc 8 threads for each step
+    plot_vary_param_per_step(
+        dataset_agg_step, DEFAULT_PARAMS.processes, out=out_dir)
+    plot_vary_param_per_step(
+        dataset_agg_step, DEFAULT_PARAMS.threads,   out=out_dir)
+    plot_vary_param_per_step(
+        dataset_agg_step, DEFAULT_PARAMS.density,   out=out_dir)
 
+    # plots with 1 proc 1 thread
     plot_vary_param(dataset_agg_all,
                     DEFAULT_PARAMS.density,          out=out_dir, config=SINGLE_PARAMS)
 
-    plot_vary_param_per_phase(
-        dataset_agg_phase, DEFAULT_PARAMS.density,   out=out_dir, config=SINGLE_PARAMS)
+    # plots with 1 proc 1 thread for each step
+    plot_vary_param_per_step(
+        dataset_agg_step, DEFAULT_PARAMS.density,   out=out_dir, config=SINGLE_PARAMS)
+
+    plot_configurations_time(dataset_agg_all, out=out_dir,
+                             fix_param=DEFAULT_PARAMS.density)

@@ -8,6 +8,11 @@ N_NODES=16
 N_CPU=8
 RAM=64
 DEBUG=1
+SCHEDULE_TYPE="dynamic"
+SCHEDULE_CHUNKSIZE=1000
+export OMP_SCHEDULE="${SCHEDULE_TYPE},${SCHEDULE_CHUNKSIZE}"
+echo ${OMP_SCHEDULE}
+
 rm -rf sub_scripts
 mkdir -p sub_scripts
 mkdir -p sub_results
@@ -29,7 +34,7 @@ submit () {
     then
         FILENAME=$(basename ${FILE})
         TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
-        SUB_NAME=${TIMESTAMP}_${ITER}_${MIN_SUPPORT}_${N_PROC}_${N_THREAD}_${FILENAME}
+        SUB_NAME=${TIMESTAMP}_${ITER}_${MIN_SUPPORT}_${N_PROC}_${N_THREAD}_${FILENAME}_${SCHEDULE_TYPE}
         echo ${SUB_NAME}
 cat > sub_scripts/sub.sh <<EOF
 #PBS -l select=${N_NODES}:ncpus=${N_CPU}:mem=${RAM}gb
@@ -56,9 +61,9 @@ EOF
 cycle_support () {
     N_PROC=$1
     N_THREAD=$2
-    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+    for ((ITER=1; ITER<=30; ITER++))
     do
-        for MIN_SUPPORT in 0.0002
+        for MIN_SUPPORT in 0.0001
         do
             submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "${N_PROC}" "${N_THREAD}"
         done
@@ -68,7 +73,8 @@ cycle_support () {
 cycle_processes () {
     MIN_SUPPORT=$1
     N_THREAD=$2
-    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+    for ((ITER=1; ITER<=30; ITER++))
     do
         for N_PROC in 1 4 8 32 64
         do
@@ -80,7 +86,8 @@ cycle_processes () {
 cycle_threads () {
     MIN_SUPPORT=$1
     N_PROC=$2
-    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+    for ((ITER=1; ITER<=30; ITER++))
     do
         for N_THREAD in 1 2 4 6 12 16
         do
@@ -93,7 +100,8 @@ cycle_files () {
     MIN_SUPPORT=$1
     N_PROC=$2
     N_THREAD=$3
-    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+
+    for ((ITER=1; ITER<=30; ITER++))
     do
         for D in ${DATA_DIR}/*
         do
@@ -106,7 +114,7 @@ cycle_files () {
 }
 
 # cycle_support "1" "1"
-# cycle_support "16" "8"
+cycle_support "16" "8"
 
 cycle_processes "0.0001" "8"
 

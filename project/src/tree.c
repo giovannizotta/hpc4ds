@@ -287,7 +287,7 @@ Tree tree_build_from_transactions(int rank, int world_size,
         num_threads(num_threads)
     for (pow = 1; pow < 2 * n_transactions; pow *= 2) {
         int start = pow == 1 ? 0 : pow / 2;
-#pragma omp for
+#pragma omp for schedule(runtime)
         for (i = start; i < n_transactions; i += pow) {
             if (pow > 1) {
                 // at levels > 1, merge two subtrees
