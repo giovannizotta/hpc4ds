@@ -6,17 +6,29 @@ import sys
 import matplotlib.pyplot as plt
 from collections import namedtuple
 
-RESULTS_DIR = '../../../res'
+RESULTS_DIR = 'pct/'
 OUTPUT_DIR = 'plots/'
 
 Param = namedtuple('Param', ['name', 'short', 'long', 'default'])
-Config = namedtuple('Config', ['support', 'processes', 'threads', 'density'])
+Config = namedtuple(
+    'Config', ['support', 'processes', 'threads', 'density', 'nodes', 'cpus'])
 
 DEFAULT_PARAMS = Config(
     Param('support',   'S', 'supports',                '0.0001'),
     Param('processes', 'P', 'number of processes',         '16'),
     Param('threads',   'T', 'number of threads',            '8'),
     Param('density',   'D', 'frequent itemset densities', '0.6'),
+    Param('nodes',     'N', 'nodes',                       '16'),
+    Param('cpus',      'C', 'cpus',                         '8')
+)
+
+SINGLE_PARAMS = Config(
+    Param('support',   'S', 'supports',                '0.0001'),
+    Param('processes', 'P', 'number of processes',          '1'),
+    Param('threads',   'T', 'number of threads',            '1'),
+    Param('density',   'D', 'frequent itemset densities', '0.6'),
+    Param('nodes',     'N', 'nodes',                        '1'),
+    Param('cpus',      'C', 'cpus',                         '1')
 )
 
 
@@ -32,68 +44,115 @@ def load_dataset(dir_path):
                 threads=t,
                 density=d
         )
-        dataset = dataset.append(tmp, ignore_index=True, sort=False)
+        if (tmp[(tmp['rank'] == 0) & (tmp['msg'] == 'received global tree')].empty):
+            print(f'Discarding {file_path}')
+        else:
+            dataset = dataset.append(tmp, ignore_index=True, sort=False)
 
     return dataset
 
 
-def aggregate_run_times(dataset):
-    return dataset.groupby(['timestamp', 'support', 'processes', 'threads', 'density', 'rank']) \
-        .agg({'time': np.sum}) \
+def aggregate_rank(dataset):
+    return dataset\
+        .groupby(['timestamp', 'support', 'processes', 'threads', 'density', 'rank']) \
+        .agg({'time': np.sum})\
         .groupby(['timestamp', 'support', 'processes', 'threads', 'density']) \
         .agg({'time': np.max}) \
         .reset_index()
 
 
-def default_config(dataset, excluded_param):
+def aggregate_phase(dataset):
+    return dataset\
+        .groupby(['timestamp', 'support', 'processes', 'threads', 'density', 'msg']) \
+        .agg({'time': np.max}) \
+        .reset_index()
+
+
+def load_config(dataset, config, excluded_param):
     # mask = reduce(lambda x, y: x & (dataset[y.name] == y.default),
     #               filter(lambda x: x != excluded_param, DEFAULT_PARAMS),
     #               pd.Series((True for _ in range(dataset.shape[0]))))
     mask = pd.Series((True for _ in range(dataset.shape[0])))
-    for param in filter(lambda x: x != excluded_param, DEFAULT_PARAMS):
+    for param in filter(lambda x: x != excluded_param and
+                        x.name in dataset.columns, config):
         mask &= dataset[param.name] == param.default
     return dataset[mask]
 
 
-def get_plot_title(excluded_param):
-    params = ', '.join(f"{param.name}={param.default}" for param in DEFAULT_PARAMS
+def get_plot_title(excluded_param, config, additional_param=''):
+    params = ', '.join(f"{param.name}={param.default}" for param in config
                        if param != excluded_param)
-    return f"""Time with different {excluded_param.long}
-({params}, nodes=16, cpu=8)"""
+    return f"""Time with different {excluded_param.long} {additional_param}
+({params})"""
 
 
-def plot_vary_param(dataset, param, out):
-    # print(default_config(dataset, excluded_param=param).sort_values(
+def plot_vary_param(dataset, param, out, config=DEFAULT_PARAMS):
+    # print(load_config(dataset, config, excluded_param=param).sort_values(
     #     by=[param.name], key=lambda c: pd.to_numeric(c)))
 
-    default_config(dataset, excluded_param=param) \
-        .groupby(param.name).agg({'time': np.mean}) \
+    load_config(dataset, config, excluded_param=param) \
+        .groupby(param.name) \
+        .agg({'time': np.mean}) \
         .sort_values(by=[param.name],
                      key=lambda c: pd.to_numeric(c)) \
         .plot(ylabel='seconds',
-              title=get_plot_title(excluded_param=param)) \
+              title=get_plot_title(param, config))
+
+    plt.savefig(os.path.join(
+        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}.png'))
 
 
-    plt.savefig(os.path.join(out, f'{param.name}.png'))
+def plot_count(dataset, out):
+    dataset.groupby(['processes', 'threads', 'density'])\
+        .agg({'timestamp': len})\
+        .plot(kind='bar',
+              title="Number of runs per configuration")
+    plt.tight_layout()
+    plt.savefig(os.path.join(out, f'count.png'))
 
 
-def plot_count(dataset):
-    dataset.groupby(['processes', 'threads', 'density']
-                    ).agg({'timestamp': len}).plot(kind='bar')
-    plt.show()
+def plot_vary_param_per_phase(dataset, param, out, config=DEFAULT_PARAMS):
+    load_config(dataset, config, excluded_param=param) \
+        .groupby([param.name, 'msg']) \
+        .agg({'time': np.mean}) \
+        .unstack() \
+        .sort_values(by=[param.name],
+                     key=lambda c: pd.to_numeric(c)) \
+        .plot(ylabel='seconds',
+              title=get_plot_title(param, config, additional_param='per phase'))
+    plt.tight_layout()
+    plt.savefig(os.path.join(
+        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}_phase.png'))
 
 
 if __name__ == '__main__':
     basepath = os.path.dirname(sys.argv[0])
     dataset = load_dataset(os.path.join(basepath, RESULTS_DIR))
-    dataset = aggregate_run_times(dataset)
-    plot_count(dataset)
+    dataset_agg_all = aggregate_rank(dataset)
+    dataset_agg_phase = aggregate_phase(dataset)
     # print(dataset[(dataset['processes'] != '1') & (
     #     dataset['threads'] != '1')]['time'].max())
     # print(dataset)
     # print(dataset[dataset['timestamp']
     #       == '2021-06-09-12-20-39'])
     out_dir = os.path.join(basepath, OUTPUT_DIR)
-    plot_vary_param(dataset, DEFAULT_PARAMS.processes, out=out_dir)
-    plot_vary_param(dataset, DEFAULT_PARAMS.threads,   out=out_dir)
-    plot_vary_param(dataset, DEFAULT_PARAMS.density,   out=out_dir)
+    plot_count(dataset_agg_all, out_dir)
+    plot_vary_param(dataset_agg_all,
+                    DEFAULT_PARAMS.processes, out=out_dir)
+    plot_vary_param(dataset_agg_all,
+                    DEFAULT_PARAMS.threads,   out=out_dir)
+    plot_vary_param(dataset_agg_all,
+                    DEFAULT_PARAMS.density,   out=out_dir)
+
+    plot_vary_param_per_phase(
+        dataset_agg_phase, DEFAULT_PARAMS.processes, out=out_dir)
+    plot_vary_param_per_phase(
+        dataset_agg_phase, DEFAULT_PARAMS.threads,   out=out_dir)
+    plot_vary_param_per_phase(
+        dataset_agg_phase, DEFAULT_PARAMS.density,   out=out_dir)
+
+    plot_vary_param(dataset_agg_all,
+                    DEFAULT_PARAMS.density,          out=out_dir, config=SINGLE_PARAMS)
+
+    plot_vary_param_per_phase(
+        dataset_agg_phase, DEFAULT_PARAMS.density,   out=out_dir, config=SINGLE_PARAMS)
