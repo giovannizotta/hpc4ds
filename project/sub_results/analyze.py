@@ -35,7 +35,8 @@ SINGLE_PARAMS = Config(
 def load_dataset(dir_path):
     dataset = pd.DataFrame()
     for file_path in filter(lambda x: x.startswith('out_'), os.listdir(dir_path)):
-        _, ts, _, s, p, t, d = file_path.split('_')
+        _, ts, _, s, p, t, d, sc = file_path.split('_')
+        # print(file_path)
         tmp = pd.read_csv(os.path.join(dir_path, file_path), sep=', ', engine='python') \
             .assign(
                 timestamp=ts,
@@ -100,7 +101,7 @@ def plot_vary_param(dataset, param, out, config=DEFAULT_PARAMS):
               title=get_plot_title(param, config))
 
     plt.savefig(os.path.join(
-        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}.pdf'))
+        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}.png'))
 
 
 def plot_count(dataset, out):
@@ -109,7 +110,7 @@ def plot_count(dataset, out):
         .plot(kind='bar',
               title="Number of runs per configuration")
     plt.tight_layout()
-    plt.savefig(os.path.join(out, f'count.pdf'))
+    plt.savefig(os.path.join(out, f'count.png'))
 
 
 def plot_vary_param_per_step(dataset, param, out, config=DEFAULT_PARAMS):
@@ -123,7 +124,7 @@ def plot_vary_param_per_step(dataset, param, out, config=DEFAULT_PARAMS):
               title=get_plot_title(param, config, additional_param='per step'))
     plt.tight_layout()
     plt.savefig(os.path.join(
-        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}_step.pdf'))
+        out, f'{config.nodes.default}_{config.cpus.default}_{param.name}_step.png'))
 
 
 def plot_configurations_time(dataset, out, fix_param):
@@ -146,7 +147,7 @@ def plot_configurations_time(dataset, out, fix_param):
     ax.set_xticklabels(ticks)
 
     plt.tight_layout()
-    plt.savefig(os.path.join(out, f'config_time.pdf'))
+    plt.savefig(os.path.join(out, f'config_time.png'))
 
 
 if __name__ == '__main__':
