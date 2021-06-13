@@ -1,0 +1,97 @@
+rank, time, msg
+0, 9.502234, read transactions
+9, 9.502365, read transactions
+2, 9.501759, read transactions
+1, 9.501954, read transactions
+11, 9.502621, read transactions
+10, 9.502425, read transactions
+7, 9.503083, read transactions
+3, 9.502762, read transactions
+13, 9.501987, read transactions
+12, 9.502586, read transactions
+8, 9.502529, read transactions
+6, 9.502579, read transactions
+4, 9.502383, read transactions
+14, 9.501454, read transactions
+5, 9.502051, read transactions
+15, 9.501442, read transactions
+0, 0.050661, received global map
+0, 0.000561, sorted local items
+2, 0.051854, received global map
+4, 0.051919, received global map
+3, 0.052000, received global map
+14, 0.052049, received global map
+11, 0.052272, received global map
+2, 0.000410, sorted local items
+15, 0.052101, received global map
+13, 0.052229, received global map
+3, 0.000439, sorted local items
+12, 0.052447, received global map
+5, 0.052417, received global map
+8, 0.052319, received global map
+6, 0.052426, received global map
+9, 0.052621, received global map
+7, 0.052520, received global map
+11, 0.000418, sorted local items
+4, 0.000825, sorted local items
+14, 0.000569, sorted local items
+12, 0.000397, sorted local items
+5, 0.000397, sorted local items
+1, 0.052809, received global map
+10, 0.052842, received global map
+8, 0.000412, sorted local items
+13, 0.000483, sorted local items
+6, 0.000435, sorted local items
+9, 0.000447, sorted local items
+15, 0.000798, sorted local items
+7, 0.000432, sorted local items
+10, 0.000438, sorted local items
+1, 0.000532, sorted local items
+10, 0.001964, received sorted global items
+11, 0.002666, received sorted global items
+7, 0.002277, received sorted global items
+12, 0.002511, received sorted global items
+8, 0.002465, received sorted global items
+9, 0.002339, received sorted global items
+6, 0.002528, received sorted global items
+15, 0.002465, received sorted global items
+13, 0.002769, received sorted global items
+14, 0.002859, received sorted global items
+0, 0.004545, received sorted global items
+1, 0.002368, received sorted global items
+2, 0.003725, received sorted global items
+3, 0.003534, received sorted global items
+4, 0.003262, received sorted global items
+5, 0.003167, received sorted global items
+5, 44.179677, built local tree
+4, 45.662547, built local tree
+2, 45.971414, built local tree
+5, 3.989713, received global tree
+11, 48.526274, built local tree
+12, 52.480330, built local tree
+3, 55.090688, built local tree
+3, 3.693827, received global tree
+0, 70.370392, built local tree
+15, 74.999930, built local tree
+9, 77.989802, built local tree
+10, 79.555948, built local tree
+11, 31.135140, received global tree
+8, 81.105107, built local tree
+7, 81.246191, built local tree
+6, 81.632589, built local tree
+9, 7.559979, received global tree
+13, 86.788414, built local tree
+7, 7.524132, received global tree
+13, 5.827512, received global tree
+14, 94.905487, built local tree
+15, 20.129834, received global tree
+10, 26.710517, received global tree
+6, 33.295205, received global tree
+14, 21.292508, received global tree
+1, 139.982692, built local tree
+12, 87.750636, received global tree
+1, 5.704293, received global tree
+2, 104.378765, received global tree
+4, 112.783453, received global tree
+8, 200.177192, received global tree
+0, 240.705839, received global tree

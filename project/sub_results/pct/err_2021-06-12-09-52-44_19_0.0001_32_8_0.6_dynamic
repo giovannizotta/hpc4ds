@@ -1,0 +1,13 @@
+[proxy:0:6@hpc-c03-node13.unitn.it] HYDU_create_process (utils/launch/launch.c:75): execvp error on file hpc4ds/project/bin/main.out (Stale file handle)
+[proxy:0:6@hpc-c03-node13.unitn.it] [proxy:0:6@hpc-c03-node13.unitn.it] HYDU_create_process (utils/launch/launch.c:75): HYDU_create_process (utils/launch/launch.c:75): execvp error on file hpc4ds/project/bin/main.out (Stale file handle)
+execvp error on file hpc4ds/project/bin/main.out (Stale file handle)
+[proxy:0:6@hpc-c03-node13.unitn.it] HYDU_create_process (utils/launch/launch.c:75): execvp error on file hpc4ds/project/bin/main.out (Stale file handle)
+[proxy:0:6@hpc-c03-node13.unitn.it] HYDU_create_process (utils/launch/launch.c:75): execvp error on file hpc4ds/project/bin/main.out (Stale file handle)
+[proxy:0:6@hpc-c03-node13.unitn.it] HYDU_create_process (utils/launch/launch.c:75): execvp error on file hpc4ds/project/bin/main.out (Stale file handle)
+=>> PBS: job killed: walltime 3145 exceeded limit 3030
+[mpiexec@hpc-c11-node01.unitn.it] HYDU_sock_write (utils/sock/sock.c:286): write error (Bad file descriptor)
+[mpiexec@hpc-c11-node01.unitn.it] HYD_pmcd_pmiserv_send_signal (pm/pmiserv/pmiserv_cb.c:169): unable to write data to proxy
+[mpiexec@hpc-c11-node01.unitn.it] ui_cmd_cb (pm/pmiserv/pmiserv_pmci.c:79): unable to send signal downstream
+[mpiexec@hpc-c11-node01.unitn.it] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[mpiexec@hpc-c11-node01.unitn.it] HYD_pmci_wait_for_completion (pm/pmiserv/pmiserv_pmci.c:198): error waiting for event
+[mpiexec@hpc-c11-node01.unitn.it] main (ui/mpich/mpiexec.c:344): process manager error waiting for completion
