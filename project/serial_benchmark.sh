@@ -6,11 +6,16 @@ MAIN_FILE=$2
 
 N_NODES=1
 N_CPU=1
-RAM=128
+RAM=64
 DEBUG=1
+SCHEDULE_TYPE="static"
+SCHEDULE_CHUNKSIZE=1
+export OMP_SCHEDULE="${SCHEDULE_TYPE},${SCHEDULE_CHUNKSIZE}"
+
 rm -rf sub_scripts
 mkdir -p sub_scripts
 mkdir -p sub_results
+
 
 for D in ${DATA_DIR}/*
 do
@@ -29,7 +34,7 @@ submit () {
     then
         FILENAME=$(basename ${FILE})
         TIMESTAMP=$(date +"%Y-%m-%d-%H-%M-%S")
-        SUB_NAME=${TIMESTAMP}_${ITER}_${MIN_SUPPORT}_${N_PROC}_${N_THREAD}_${FILENAME}
+        SUB_NAME=${TIMESTAMP}_${ITER}_${MIN_SUPPORT}_${N_PROC}_${N_THREAD}_${FILENAME}_${SCHEDULE_TYPE}
         echo ${SUB_NAME}
 cat > sub_scripts/sub.sh <<EOF
 #PBS -l select=${N_NODES}:ncpus=${N_CPU}:mem=${RAM}gb
@@ -49,13 +54,13 @@ module load mpich-3.2
 EOF
         chmod +x sub_scripts/sub.sh
         qsub sub_scripts/sub.sh
-        sleep 1000
+        sleep 600
     fi
 }
 
 cycle_files_dir () {
     MIN_SUPPORT=$1
-    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+    for ((ITER=1; ITER<=40; ITER++))
     do
         for D in ${DATA_DIR}/*
         do
@@ -69,7 +74,7 @@ cycle_files_dir () {
 
 cycle_main_file () {
     MIN_SUPPORT=$1
-    for ITER in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+    for ((ITER=1; ITER<=40; ITER++))
     do
         submit "${D}" "${MAIN_FILE}" "${ITER}" "${MIN_SUPPORT}" "1" "1"
     done
