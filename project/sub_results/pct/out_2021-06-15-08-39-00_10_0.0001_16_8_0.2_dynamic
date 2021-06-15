@@ -1,0 +1,104 @@
+rank, time, msg
+0, 5.531183, read transactions
+6, 5.531701, read transactions
+1, 5.532226, read transactions
+7, 5.531708, read transactions
+2, 5.531476, read transactions
+8, 5.531675, read transactions
+13, 5.531157, read transactions
+3, 5.532031, read transactions
+9, 5.531677, read transactions
+15, 5.531886, read transactions
+4, 5.532068, read transactions
+11, 5.531620, read transactions
+14, 5.531906, read transactions
+5, 5.532414, read transactions
+12, 5.531626, read transactions
+10, 5.531716, read transactions
+0, 0.052253, received global map
+8, 0.052152, received global map
+4, 0.052886, received global map
+6, 0.052790, received global map
+2, 0.053871, received global map
+8, 0.000460, sorted local items
+14, 0.053754, received global map
+5, 0.053423, received global map
+6, 0.000476, sorted local items
+1, 0.054275, received global map
+10, 0.052537, received global map
+15, 0.053925, received global map
+4, 0.000647, sorted local items
+2, 0.000484, sorted local items
+7, 0.052664, received global map
+13, 0.054125, received global map
+3, 0.053618, received global map
+1, 0.000500, sorted local items
+9, 0.052671, received global map
+14, 0.000606, sorted local items
+3, 0.000964, sorted local items
+11, 0.052763, received global map
+5, 0.001202, sorted local items
+12, 0.053144, received global map
+10, 0.000602, sorted local items
+9, 0.000858, sorted local items
+13, 0.001219, sorted local items
+11, 0.009594, sorted local items
+15, 0.007573, sorted local items
+0, 0.015146, sorted local items
+7, 0.015753, sorted local items
+12, 0.015274, sorted local items
+6, 0.018668, received sorted global items
+5, 0.017968, received sorted global items
+1, 0.018170, received sorted global items
+11, 0.009854, received sorted global items
+3, 0.018074, received sorted global items
+2, 0.018613, received sorted global items
+12, 0.003824, received sorted global items
+4, 0.019123, received sorted global items
+7, 0.004047, received sorted global items
+9, 0.018911, received sorted global items
+8, 0.019852, received sorted global items
+10, 0.019244, received sorted global items
+15, 0.012093, received sorted global items
+13, 0.018307, received sorted global items
+14, 0.019305, received sorted global items
+0, 0.005777, received sorted global items
+5, 41.710673, built local tree
+4, 41.821446, built local tree
+3, 41.997484, built local tree
+8, 42.873984, built local tree
+9, 43.428312, built local tree
+10, 46.171606, built local tree
+5, 4.495408, received global tree
+13, 46.560979, built local tree
+9, 3.726897, received global tree
+11, 48.698132, built local tree
+7, 48.927120, built local tree
+1, 49.207680, built local tree
+14, 49.249442, built local tree
+2, 50.588034, built local tree
+3, 8.722295, received global tree
+12, 53.880743, built local tree
+13, 7.440535, received global tree
+11, 6.058366, received global tree
+6, 65.211375, built local tree
+7, 16.421485, received global tree
+10, 28.378504, received global tree
+6, 19.121940, received global tree
+15, 98.855289, built local tree
+15, 10.058449, received global tree
+14, 83.999275, received global tree
+0, 142.265653, built local tree
+1, 93.220820, received global tree
+2, 99.040355, received global tree
+4, 118.677803, received global tree
+12, 109.444917, received global tree
+8, 264.417205, received global tree
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   PID 71946 RUNNING AT hpc-c07-node08.unitn.it
+=   EXIT CODE: 9
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+===================================================================================

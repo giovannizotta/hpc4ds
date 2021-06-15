@@ -1,0 +1,59 @@
+11 local_tree_size: 7067494
+2 local_tree_size: 7061606
+9 local_tree_size: 7065379
+1 local_tree_size: 7066734
+6 local_tree_size: 7067888
+7 local_tree_size: 7069617
+3 local_tree_size: 7066051
+13 local_tree_size: 7070555
+12 local_tree_size: 7069442
+5 local_tree_size: 7068470
+4 local_tree_size: 7071103
+8 local_tree_size: 7064838
+10 local_tree_size: 7059372
+14 local_tree_size: 7066970
+15 local_tree_size: 7071935
+0 local_tree_size: 7067087
+[proxy:0:1@hpc-c04-node05.unitn.it] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:885): assert (!closed) failed
+[proxy:0:1@hpc-c04-node05.unitn.it] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[proxy:0:1@hpc-c04-node05.unitn.it] main (pm/pmiserv/pmip.c:206): demux engine error waiting for event
+[proxy:0:3@hpc-c05-node01.unitn.it] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:885): assert (!closed) failed
+[proxy:0:3@hpc-c05-node01.unitn.it] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[proxy:0:3@hpc-c05-node01.unitn.it] main (pm/pmiserv/pmip.c:206): demux engine error waiting for event
+[proxy:0:4@hpc-c07-node15.unitn.it] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:885): assert (!closed) failed
+[proxy:0:4@hpc-c07-node15.unitn.it] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[proxy:0:4@hpc-c07-node15.unitn.it] main (pm/pmiserv/pmip.c:206): demux engine error waiting for event
+[proxy:0:5@hpc-c11-node01.unitn.it] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:885): assert (!closed) failed
+[proxy:0:5@hpc-c11-node01.unitn.it] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[proxy:0:5@hpc-c11-node01.unitn.it] main (pm/pmiserv/pmip.c:206): demux engine error waiting for event
+[proxy:0:2@hpc-c07-node10.unitn.it] HYD_pmcd_pmip_control_cmd_cb (pm/pmiserv/pmip_cb.c:885): assert (!closed) failed
+[proxy:0:2@hpc-c07-node10.unitn.it] HYDT_dmxu_poll_wait_for_event (tools/demux/demux_poll.c:76): callback returned error status
+[proxy:0:2@hpc-c07-node10.unitn.it] main (pm/pmiserv/pmip.c:206): demux engine error waiting for event
+[mpiexec@hpc-c07-node08.maas.icts.unitn.it] HYDT_bscu_wait_for_completion (tools/bootstrap/utils/bscu_wait.c:76): one of the processes terminated badly; aborting
+[mpiexec@hpc-c07-node08.maas.icts.unitn.it] HYDT_bsci_wait_for_completion (tools/bootstrap/src/bsci_wait.c:23): launcher returned error waiting for completion
+[mpiexec@hpc-c07-node08.maas.icts.unitn.it] HYD_pmci_wait_for_completion (pm/pmiserv/pmiserv_pmci.c:218): launcher returned error waiting for completion
+[mpiexec@hpc-c07-node08.maas.icts.unitn.it] main (ui/mpich/mpiexec.c:344): process manager error waiting for completion
+Command exited with non-zero status 255
+	Command being timed: "mpirun.actual -n 16 hpc4ds/project/bin/main.out /home/giovanni.zotta/dataset/pct/0.2 8 0.0001 1"
+	User time (seconds): 411.77
+	System time (seconds): 313.18
+	Percent of CPU this job got: 238%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:03.76
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 37505460
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 45
+	Minor (reclaiming a frame) page faults: 40377978
+	Voluntary context switches: 15202137
+	Involuntary context switches: 1162
+	Swaps: 0
+	File system inputs: 239760
+	File system outputs: 72
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 255

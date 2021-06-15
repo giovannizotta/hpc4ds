@@ -1,0 +1,41 @@
+10 local_tree_size: 5888592
+8 local_tree_size: 5906652
+6 local_tree_size: 5906085
+4 local_tree_size: 5901249
+13 local_tree_size: 5889763
+9 local_tree_size: 5901370
+11 local_tree_size: 5891434
+12 local_tree_size: 5893326
+15 local_tree_size: 5888562
+7 local_tree_size: 5897257
+14 local_tree_size: 5890305
+0 local_tree_size: 5891288
+1 local_tree_size: 5908179
+2 local_tree_size: 5883864
+5 local_tree_size: 5893692
+3 local_tree_size: 5902512
+global_tree_size: 93117403
+original_num_items: 50000
+	Command being timed: "mpirun.actual -n 16 hpc4ds/project/bin/main.out /home/giovanni.zotta/dataset2/pct/0.6 4 0.0001 1"
+	User time (seconds): 586.62
+	System time (seconds): 231.28
+	Percent of CPU this job got: 305%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:27.40
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 32083196
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 39340688
+	Voluntary context switches: 26967768
+	Involuntary context switches: 918
+	Swaps: 0
+	File system inputs: 298984
+	File system outputs: 80
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
