@@ -1,0 +1,23 @@
+	Command being timed: "mpirun.actual -n 1 hpc4ds/project/bin/main.out /home/giovanni.zotta/dataset/pct/0.8 1 0.0001 1"
+	User time (seconds): 1593.79
+	System time (seconds): 175.12
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:36.67
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 55785768
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 159768253
+	Voluntary context switches: 20810
+	Involuntary context switches: 4924
+	Swaps: 0
+	File system inputs: 1546856
+	File system outputs: 24
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
