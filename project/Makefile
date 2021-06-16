@@ -8,6 +8,9 @@ main: help
 
 all: clean build run_local 
 
+build_test:
+	@mpicc -O2 -std=gnu99 -Wall -g -fopenmp test_schedule.c -o bin/test_schedule.out
+
 build:
 	@mpicc -O2 -std=gnu99 -Wall -g -fopenmp src/*.c src/hashmap/*.c -o bin/main.out
 
