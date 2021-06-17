@@ -1,0 +1,25 @@
+rank, time, msg
+3, 15.205066, read transactions
+0, 15.206476, read transactions
+1, 15.206505, read transactions
+2, 15.206640, read transactions
+3, 0.025550, received global map
+0, 0.025990, received global map
+2, 0.026682, received global map
+0, 0.001008, sorted local items
+3, 0.001845, sorted local items
+1, 0.027441, received global map
+2, 0.000946, sorted local items
+1, 0.001076, sorted local items
+2, 0.001515, received sorted global items
+0, 0.002219, received sorted global items
+1, 0.000707, received sorted global items
+3, 0.001965, received sorted global items
+1, 426.614470, built local tree
+2, 430.947859, built local tree
+0, 440.411813, built local tree
+1, 15.596083, received global tree
+3, 528.858140, built local tree
+3, 31.599070, received global tree
+2, 169.094732, received global tree
+0, 191.296678, received global tree

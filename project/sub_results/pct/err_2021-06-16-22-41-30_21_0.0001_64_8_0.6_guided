@@ -1,0 +1,89 @@
+1 local_tree_size: 1479360
+17 local_tree_size: 1493191
+42 local_tree_size: 1481225
+3 local_tree_size: 1485168
+26 local_tree_size: 1485981
+10 local_tree_size: 1481912
+58 local_tree_size: 1479821
+39 local_tree_size: 1484877
+49 local_tree_size: 1485020
+37 local_tree_size: 1481047
+59 local_tree_size: 1479845
+25 local_tree_size: 1489647
+16 local_tree_size: 1485415
+57 local_tree_size: 1487327
+35 local_tree_size: 1490800
+0 local_tree_size: 1483547
+22 local_tree_size: 1481881
+8 local_tree_size: 1482075
+38 local_tree_size: 1490740
+27 local_tree_size: 1485640
+5 local_tree_size: 1491949
+55 local_tree_size: 1484468
+24 local_tree_size: 1486089
+48 local_tree_size: 1485075
+56 local_tree_size: 1484808
+23 local_tree_size: 1481080
+53 local_tree_size: 1482075
+11 local_tree_size: 1481715
+28 local_tree_size: 1482456
+12 local_tree_size: 1487257
+2 local_tree_size: 1484410
+9 local_tree_size: 1479096
+41 local_tree_size: 1486489
+33 local_tree_size: 1489406
+7 local_tree_size: 1486801
+54 local_tree_size: 1479830
+50 local_tree_size: 1484622
+44 local_tree_size: 1480495
+40 local_tree_size: 1482003
+47 local_tree_size: 1483123
+21 local_tree_size: 1483291
+60 local_tree_size: 1485000
+6 local_tree_size: 1485743
+18 local_tree_size: 1481154
+61 local_tree_size: 1483482
+14 local_tree_size: 1485266
+13 local_tree_size: 1487679
+19 local_tree_size: 1482691
+45 local_tree_size: 1480883
+46 local_tree_size: 1487861
+15 local_tree_size: 1483517
+43 local_tree_size: 1479864
+63 local_tree_size: 1480787
+32 local_tree_size: 1482034
+34 local_tree_size: 1485440
+29 local_tree_size: 1485587
+31 local_tree_size: 1484574
+30 local_tree_size: 1485459
+51 local_tree_size: 1479563
+62 local_tree_size: 1480167
+4 local_tree_size: 1485035
+20 local_tree_size: 1488841
+36 local_tree_size: 1485967
+52 local_tree_size: 1484634
+global_tree_size: 93117403
+original_num_items: 50000
+	Command being timed: "mpirun.actual -n 64 hpc4ds/project/bin/main.out /home/giovanni.zotta/dataset2/pct/0.6 8 0.0001 1"
+	User time (seconds): 576.87
+	System time (seconds): 232.86
+	Percent of CPU this job got: 457%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:57.11
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 30861228
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 33641905
+	Voluntary context switches: 7269804
+	Involuntary context switches: 57411
+	Swaps: 0
+	File system inputs: 203520
+	File system outputs: 88
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
