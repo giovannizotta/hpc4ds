@@ -1,1 +1,2 @@
-project/sub_results/* linguist-detectable=false
+project/sub_results/** -linguist-detectable
+project/doc/** linguist-documentation
